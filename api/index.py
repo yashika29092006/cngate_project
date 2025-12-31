@@ -2,41 +2,41 @@ import os
 import sys
 from mangum import Mangum
 
-# Get the absolute path to the 'backend' directory
-# In Vercel, the file is in api/index.py, so its parent's parent is the root.
+# 1. Clean up sys.path to prevent duplicate module loading
+# We remove the current directory so that 'import app' doesn't get confused
 api_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(api_dir)
-backend_path = os.path.join(project_root, "backend")
+backend_dir = os.path.join(project_root, "backend")
 
-# VERY IMPORTANT: Only add the backend path. 
-# Do NOT add project_root to sys.path, or it will create duplicate module paths
-# (e.g. app.main vs backend.app.main) which causes SQLAlchemy errors.
-if backend_path not in sys.path:
-    sys.path.insert(0, backend_path)
+# Move the backend directory to the very front of the path
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
-# Clear any existing 'app' modules to prevent caching issues during dev-reloads
-if 'app' in sys.modules:
-    for mod in list(sys.modules.keys()):
-        if mod.startswith('app.') or mod == 'app':
-            del sys.modules[mod]
+# 2. Safety: Ensure no 'app' is already partially loaded incorrectly
+for mod in list(sys.modules.keys()):
+    if mod.startswith('app') or mod.startswith('backend.app'):
+        del sys.modules[mod]
 
 try:
-    # This will load backend/app/main.py
+    # 3. Import the FastAPI app from the now-clean path
     from app.main import app as fastapi_app
-    # Bridge FastAPI and Vercel
     app = Mangum(fastapi_app, lifespan="off")
 except Exception as e:
     import traceback
     from fastapi import FastAPI
     
+    # Fallback app to show us the REAL error if it still fails
     error_app = FastAPI()
     @error_app.get("/{full_path:path}")
     def fallback(full_path: str = "/"):
         return {
             "status": "error",
-            "message": "Backend initialization failed",
+            "message": "Backend failed to load",
             "error_detail": str(e),
             "traceback": traceback.format_exc(),
-            "sys_path": sys.path
+            "debug_paths": {
+                "backend_dir": backend_dir,
+                "sys_path_start": sys.path[:3]
+            }
         }
     app = Mangum(error_app)

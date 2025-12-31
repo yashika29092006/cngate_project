@@ -15,21 +15,15 @@ if not DATABASE_URL:
     # Local fallback
     DATABASE_URL = "postgresql://postgres:AcademyRootPassword@localhost:5432/cngate_data"
 
-# Handle Supabase Pooler (Port 6543) requirements
-# When using Transaction mode on port 6543, prepared statements must be disabled
-if ":6543" in DATABASE_URL and "prepared_statements=" not in DATABASE_URL:
-    separator = "&" if "?" in DATABASE_URL else "?"
-    DATABASE_URL += f"{separator}prepared_statements=false"
-
 # Engine configuration optimized for serverless (Vercel) and Supabase
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
-    pool_size=1,          # Minimal pool for serverless
-    max_overflow=0,       # No overflow in serverless to stay within Supabase limits
-    pool_recycle=300,     # Recycle connections every 5 minutes
+    pool_size=1,           # Low connections for serverless
+    max_overflow=0,
+    pool_recycle=300,      # Recycle every 5 mins
     connect_args={
-        "connect_timeout": 10, # Give it a bit more time for initial connection
+        "connect_timeout": 10,
         "sslmode": "require"
     }
 )
