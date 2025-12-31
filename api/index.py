@@ -1,44 +1,37 @@
 import os
 import sys
 
-# Move the safety net to the absolute top
-try:
-    from mangum import Mangum
-    from fastapi import FastAPI
-    import traceback
-except ImportError as e:
-    # If the basic libraries are missing, we can't even use Mangum.
-    # We must define an 'app' that Vercel can at least try to call.
-    def app(event, context):
+# EXTREMELY ROBUST HANDLER
+def handler(req, res=None):
+    try:
+        # 1. Setup paths
+        backend_path = os.path.join(os.path.dirname(__file__), "..", "backend")
+        if backend_path not in sys.path:
+            sys.path.insert(0, backend_path)
+
+        # 2. Try to import FastAPI and Mangum
+        from fastapi import FastAPI
+        from mangum import Mangum
+        
+        # 3. Try to import your actual app
+        from app.main import app as fastapi_app
+        
+        # 4. Wrap and execute
+        asgi_handler = Mangum(fastapi_app, lifespan="off")
+        return asgi_handler(req, res)
+
+    except Exception as e:
+        import traceback
         return {
-            "statusCode": 500,
-            "body": f"Critical Error: Missing core libraries (fastapi/mangum). Error: {str(e)}"
+            "statusCode": 200, # Return 200 so Vercel doesn't show the crash screen
+            "headers": {"Content-Type": "application/json"},
+            "body": {
+                "error": "Backend Failed to Start",
+                "message": str(e),
+                "traceback": traceback.format_exc(),
+                "CRITICAL_TIP": "Verify your DATABASE_URL in Vercel. Ensure @ in password is changed to %40"
+            }
         }
-    # Stop here
-    sys.exit(0)
 
-def create_emergency_app(error_msg, trace):
-    err_app = FastAPI()
-    @err_app.get("/{full_path:path}")
-    def fallback(full_path: str = "/"):
-        return {
-            "status": "initialization_failed",
-            "error": str(error_msg),
-            "traceback": trace,
-            "solution": "Check your DATABASE_URL for special characters like @ in the password."
-        }
-    return Mangum(err_app)
-
-try:
-    # Add backend to path
-    backend_path = os.path.join(os.path.dirname(__file__), "..", "backend")
-    if backend_path not in sys.path:
-        sys.path.insert(0, backend_path)
-
-    # Try to import the real app
-    from app.main import app as fastapi_app
-    app = Mangum(fastapi_app, lifespan="off")
-
-except Exception as e:
-    # Capture the specific error (likely the @ in the DB URL)
-    app = create_emergency_app(e, traceback.format_exc())
+# For Vercel builders that look for 'app' or 'handler'
+app = handler
