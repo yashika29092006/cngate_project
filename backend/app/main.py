@@ -3,7 +3,7 @@ from app.database.db import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import user, admin, station, review, contact, super_admin
 
-app = FastAPI(title="CNGate Backend", root_path="/api")
+app = FastAPI(title="CNGate Backend")
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +19,10 @@ try:
 except Exception as e:
     print(f"Warning: Could not create tables: {e}")
 
+
+@app.get("/")
+def root():
+    return {"message": "CNGate Backend API is running"}
 
 @app.get("/health")
 def health_check():
