@@ -116,7 +116,7 @@ async function renderAdminDashboard() {
                 try {
                     const token = sessionStorage.getItem('token');
                     // Direct fetch to ensure no dependency issues
-                    const res = await fetch(`/api/stations/${adminStation.id}`, {
+                    const res = await fetch(`https://cngate-project.vercel.app/api/stations/${adminStation.id}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
@@ -219,7 +219,7 @@ window.addEventListener('load', function () {
 async function fetchRequests() {
     try {
         const token = sessionStorage.getItem('token');
-        const res = await fetch('/api/stations/requests/pending', {
+        const res = await fetch('https://cngate-project.vercel.app/api/stations/requests/pending', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -251,7 +251,7 @@ async function fetchRequests() {
 async function resolveRequest(reqId, action) {
     try {
         const token = sessionStorage.getItem('token');
-        const res = await fetch(`/api/stations/requests/${reqId}/resolve`, {
+        const res = await fetch(`https://cngate-project.vercel.app/api/stations/requests/${reqId}/resolve`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -275,7 +275,7 @@ window.resolveRequest = resolveRequest;
 
 async function fetchAdminReviews(stationId) {
     try {
-        const res = await fetch(`/api/reviews/${stationId}`);
+        const res = await fetch(`https://cngate-project.vercel.app/api/reviews/${stationId}`);
         const reviews = await res.json();
         const list = document.getElementById('admin-reviews-list');
 
@@ -304,7 +304,7 @@ async function deleteReview(reviewId, stationId) {
 
     try {
         const token = sessionStorage.getItem('token');
-        const res = await fetch(`/api/reviews/${reviewId}`, {
+        const res = await fetch(`https://cngate-project.vercel.app/api/reviews/${reviewId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
