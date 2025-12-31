@@ -13,38 +13,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Handle database table creation safely
+# Optional DB init
 def init_db():
     try:
         from app.database.db import Base, engine
         Base.metadata.create_all(bind=engine)
-        print("Database tables created/verified successfully.")
-    except Exception as e:
-        print(f"Warning: Could not create tables: {e}")
-
-@app.get("/")
-def root():
-    return {"message": "CNGate Backend API is running"}
-
-@app.get("/health")
-def health_check():
-    from app.database.db import DATABASE_URL
-    import urllib.parse
-    
-    # Extract host for debugging (omitting password for security)
-    db_host = "Unknown"
-    try:
-        if DATABASE_URL:
-            parsed = urllib.parse.urlparse(DATABASE_URL)
-            db_host = parsed.hostname
     except:
         pass
 
-    return {
-        "status": "ok", 
-        "message": "CNGate Backend is running",
-        "database_host": db_host
-    }
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "CNGate Backend is running"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "message": "CNGate Backend is running"}
 
 app.include_router(user.router)
 app.include_router(admin.router)
