@@ -57,7 +57,7 @@
                 return;
             }
             try {
-                const res = await fetch('https://cngate-project.vercel.app/api/user/profile', {
+                const res = await fetch('/api/user/profile', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {

@@ -169,7 +169,7 @@ function searchStations() {
 
 async function fetchReviews(stationId) {
     try {
-        const res = await fetch(`https://cngate-project.vercel.app/api/reviews/${stationId}`);
+        const res = await fetch(`/api/reviews/${stationId}`);
         const reviews = await res.json();
         const list = document.getElementById('reviewsList');
         if (reviews.length === 0) {
@@ -203,7 +203,7 @@ async function submitReview(stationId) {
     }
 
     try {
-        const res = await fetch(`https://cngate-project.vercel.app/api/reviews/`, {
+        const res = await fetch(`/api/reviews/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -233,7 +233,7 @@ async function reportAvailability(stationId, availability) {
     }
 
     try {
-        const res = await fetch(`https://cngate-project.vercel.app/api/stations/${stationId}/report-availability`, {
+        const res = await fetch(`/api/stations/${stationId}/report-availability`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -8,7 +8,7 @@ if (form) {
             password: document.getElementById('user-password').value
         };
 
-        fetch('https://cngate-project.vercel.app/api/user/login', {
+        fetch('/api/user/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginData)
@@ -39,7 +39,7 @@ async function forgotPassword() {
     if (!newPassword) return;
 
     try {
-        const response = await fetch('https://cngate-project.vercel.app/api/user/forgot-password', {
+        const response = await fetch('/api/user/forgot-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password: newPassword })

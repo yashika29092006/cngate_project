@@ -14,7 +14,7 @@ if (form) {
             password: document.getElementById('admin-signup-password').value
         };
 
-        fetch('https://cngate-project.vercel.app/api/admin/signup', {
+        fetch('/api/admin/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(admin)
