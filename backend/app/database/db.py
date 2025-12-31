@@ -14,23 +14,28 @@ if not DATABASE_URL:
     # Local fallback for development
     DATABASE_URL = "postgresql://postgres:AcademyRootPassword@localhost:5432/cngate_data"
 
-# CRITICAL FIX for Supabase Transaction Pooler (Port 6543)
-# Transaction mode DOES NOT support prepared statements. 
-# We MUST add this parameter or the app will hang/crash.
-if ":6543" in DATABASE_URL and "prepared_statements=" not in DATABASE_URL:
-    sep = "&" if "?" in DATABASE_URL else "?"
-    DATABASE_URL += f"{sep}prepared_statements=false"
+# AUTOMATIC CLEANUP: Strip 'prepared_statements' from URL if it exists
+# This prevents the 'invalid connection option' error in psycopg2
+if "prepared_statements=" in DATABASE_URL:
+    import urllib.parse as urlparse
+    url_parts = list(urlparse.urlparse(DATABASE_URL))
+    query = dict(urlparse.parse_qsl(url_parts[4]))
+    query.pop('prepared_statements', None)
+    url_parts[4] = urlparse.urlencode(query)
+    DATABASE_URL = urlparse.urlunparse(url_parts)
 
-# Engine configuration optimized for Serverless (Vercel)
+# Engine configuration optimized for Serverless (Vercel) and Supabase
+# We remove prepared statement handling from the URL and handle it via pool_pre_ping
 engine = create_engine(
     DATABASE_URL,
-    pool_pre_ping=True,
-    pool_size=1,           # Keep pool tiny for serverless
+    pool_pre_ping=True,    # This checks if the connection is alive before using it
+    pool_size=1,           # Keep pool tiny to avoid Supabase connection limits
     max_overflow=0,
-    pool_recycle=300,      # Recycle connections every 5 mins
+    pool_recycle=300,
     connect_args={
         "connect_timeout": 10,
-        "sslmode": "require"
+        "sslmode": "require",
+        "options": "-c prepared_statements=off" # CORRECT WAY to disable for Supabase Pooler
     }
 )
 
