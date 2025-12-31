@@ -13,12 +13,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Try to create tables, but don't crash if it fails
-try:
-    Base.metadata.create_all(bind=engine)
-except Exception as e:
-    print(f"Warning: Could not create tables: {e}")
-
+# Handle database table creation safely
+def init_db():
+    try:
+        from app.database.db import Base, engine
+        Base.metadata.create_all(bind=engine)
+        print("Database tables created/verified successfully.")
+    except Exception as e:
+        print(f"Warning: Could not create tables: {e}")
 
 @app.get("/")
 def root():
@@ -26,6 +28,7 @@ def root():
 
 @app.get("/health")
 def health_check():
+    init_db()
     return {"status": "ok", "message": "CNGate Backend is running on Vercel"}
 
 app.include_router(user.router)
