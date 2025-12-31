@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard | CNGate</title>
+    <link rel="stylesheet" href="../styles/super-admin.css">
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="../index.html" class="sidebar-logo">
+                <span>CNGate</span>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="#stations" class="nav-link active">
+                    <span>Stations</span>
+                </a>
+                <a href="#contacts" class="nav-link">
+                    <span>Messages</span>
+                </a>
+            </nav>
+            <button class="logout-btn-sidebar" onclick="logout()">
+                Logout
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="welcome-msg">
+                    <h1 id="welcome-name">Hello, Super Admin</h1>
+                    <p>Welcome back! Here's what's happening today.</p>
+                </div>
+                <div class="date-badge" id="current-date"></div>
+            </div>
+
+            <!-- Stats Overview -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <h3>Pending Stations</h3>
+                    <div class="value" id="stat-pending">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Messages</h3>
+                    <div class="value" id="stat-contacts">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Approved Stations</h3>
+                    <div class="value" id="stat-total">0</div>
+                </div>
+            </section>
+
+            <!-- Pending Stations Section -->
+            <section id="stations">
+                <h2 class="section-title"> Pending Approvals</h2>
+                <div class="grid-container">
+                    <div id="pending-grid" class="stations-grid">
+                        <div class="empty-state">Fetching stations...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Requests Section -->
+            <section id="contacts">
+                <h2 class="section-title"> Recent Messages</h2>
+                <div class="grid-container">
+                    <div id="contacts-list" class="requests-list">
+                        <div class="empty-state">Checking messages...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Background Decoration -->
+    <div
+        style="position: fixed; top: 0; right: 0; width: 600px; height: 600px; background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, transparent 70%); z-index: -1;">
+    </div>
+
+    <script src="../js/super-admin-dashboard.js"></script>
+    <script>
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    </script>
+</body>
+
+</html>

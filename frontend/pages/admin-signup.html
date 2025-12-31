@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration - CNGate</title>
+    <link rel="stylesheet" href="../styles/auth.css">
+</head>
+
+<body>
+    <video autoplay loop muted playsinline id="bgVideo">
+        <source src="../assets/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <header>
+        <div class="header-content">
+            <a href="../index.html" class="logo">CNGate</a>
+            <nav>
+                <a href="../pages/about.html" class="nav-link">About</a>
+                <a href="../pages/contact.html" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="auth-container">
+        <a href="../index.html" class="back-link">← Back to Home</a>
+        <h2>Station Admin Registration</h2>
+        <p>Register your CNG station</p>
+        <form id="adminSignupForm">
+            <div class="form-group">
+                <label for="admin-signup-name">Station Name</label>
+                <div class="input-wrapper">
+                    <input type="text" id="admin-signup-name" placeholder="ABC CNG Station" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="admin-signup-area">Area/Location (Chennai)</label>
+                <div class="input-wrapper">
+                    <select id="admin-signup-area" required>
+                        <option value="">Select area</option>
+                        <option value="T Nagar">T Nagar</option>
+                        <option value="Anna Nagar">Anna Nagar</option>
+                        <option value="Velachery">Velachery</option>
+                        <option value="Adyar">Adyar</option>
+                        <option value="Tambaram">Tambaram</option>
+                        <option value="Porur">Porur</option>
+                        <option value="OMR">OMR</option>
+                        <option value="Perungudi">Perungudi</option>
+                        <option value="Guindy">Guindy</option>
+                        <option value="Chrompet">Chrompet</option>
+                        <option value="Meenambakkam">Meenambakkam</option>
+                        <option value="Koyambedu">Koyambedu</option>
+                        <option value="Alandur">Alandur</option>
+                        <option value="Madipakkam">Madipakkam</option>
+                        <option value="St.Thomas">St.Thomas</option>
+                        <option value="Ponnamalli">Ponnamalli</option>
+                        <option value="Chithalapakkam">Chithalapakkam</option>
+                        <option value="Kilkattalai">Kilkattalai</option>
+                        <option value="Muduchur">Muduchur</option>
+                        <option value="Saidapet">Saidapet</option>
+                        <option value="Vandalur">Vandalur</option>
+                        <option value="Pallavaram">Pallavaram</option>
+                        <option value="Tenampettai">Tenampettai</option>
+                        <option value="chetpet">chetpet</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="admin-signup-address">Full Address</label>
+                <div class="input-wrapper">
+                    <input type="text" id="admin-signup-address" placeholder="No. 123, Example Street" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="admin-signup-latitude">Latitude</label>
+                <div class="input-wrapper">
+                    <input type="number" id="admin-signup-latitude" step="0.000001" placeholder="13.0827" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="admin-signup-longitude">Longitude</label>
+                <div class="input-wrapper">
+                    <input type="number" id="admin-signup-longitude" step="0.000001" placeholder="80.2707" required>
+                </div>
+            </div>
+            <button type="button" class="location-btn" onclick="getCurrentLocation()">Get Current Location</button>
+            <div class="form-group">
+                <label for="admin-signup-email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="admin-signup-email" placeholder="station@admin.com" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="admin-signup-phone">Contact Number</label>
+                <div class="input-wrapper">
+                    <input type="tel" id="admin-signup-phone" pattern="[0-9]{10}" placeholder="Landline or Mobile"
+                        required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="admin-signup-password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="admin-signup-password" placeholder="Create a strong password" required
+                        minlength="6">
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Register Station</button>
+        </form>
+        <div class="auth-switch">
+            Already registered? <a href="../pages/admin-login.html">Login</a>
+        </div>
+    </div>
+
+    <script src="../js/stations-data.js"></script>
+    <script src="../js/admin-signup.js"></script>
+</body>
+
+</html>

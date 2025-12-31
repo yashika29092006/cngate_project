@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CNGate</title>
+    <link rel="stylesheet" href="../styles/admin-dashboard.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Station Dashboard</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+
+        <div class="admin-toolbar" id="admin-toolbar" aria-live="polite">
+        </div>
+
+
+        <main class="stations-area">
+            <div id="dashboard-spinner" class="dashboard-spinner" role="status" aria-hidden="true" aria-label="Loading">
+            </div>
+
+            <div class="stations-grid" id="stations-grid">
+                <!-- Station will be loaded here -->
+            </div>
+
+            <div id="requests-container" class="requests-container" style="display:none; margin-top:2rem;">
+                <h3>Pending Availability Reports</h3>
+                <div id="requests-list" class="requests-list"></div>
+            </div>
+
+            <div id="reviews-container" class="reviews-container" style="margin-top:2rem;">
+                <h3>Station Reviews</h3>
+                <div id="admin-reviews-list" class="reviews-list">Loading reviews...</div>
+            </div>
+        </main>
+    </div>
+
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Station Details</h2>
+                <button class="close-modal" onclick="closeModal()">X</button>
+            </div>
+            <form id="updateStationForm">
+                <input type="hidden" id="edit-station-id">
+                <div class="form-group">
+                    <label for="edit-availability">CNG Availability</label>
+                    <select id="edit-availability" required>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Not Available</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-quantity">Available Quantity (in KG)</label>
+                    <input type="number" id="edit-quantity" step="1" min="0" placeholder="e.g., 500" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-crowd">Crowd Status</label>
+                    <select id="edit-crowd" required>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-price">Price per KG (₹)</label>
+                    <input type="number" id="edit-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-timing">Timing</label>
+                    <input type="text" id="edit-timing" placeholder="e.g., Open 24 hours" required>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="../js/stations-data.js"></script>
+    <script src="../js/admin-dashboard.js"></script>
+</body>
+
+</html>

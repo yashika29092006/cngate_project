@@ -1,0 +1,522 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #0a4a19;
+    --primary-dark: #052e16;
+    --accent: #27ae60;
+    --surface: #ffffff;
+    --surface-transparent: rgba(255, 255, 255, 0.95);
+    --text: #1e293b;
+    --text-light: #64748b;
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --radius: 16px;
+    --danger: #dc2626;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    color: var(--text);
+}
+
+/* Map Container */
+#map {
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
+/* Floating UI - Top Nav */
+.floating-nav {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+    /* Let clicks pass through empty space */
+    z-index: 1000;
+    animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.map-logo {
+    background: var(--surface-transparent);
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: var(--shadow);
+    pointer-events: auto;
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.map-logo:hover {
+    transform: scale(1.02);
+}
+
+.map-logo h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 1rem;
+    pointer-events: auto;
+}
+
+.profile-link,
+.logout-btn {
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    border: none;
+}
+
+.profile-link {
+    background: var(--surface);
+    color: var(--primary);
+}
+
+.logout-btn {
+    background: var(--danger);
+    color: white;
+}
+
+.profile-link:hover,
+.logout-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Floating Search & Filter Bar */
+.search-overlay {
+    position: absolute;
+    top: 100px;
+    left: 20px;
+    width: 380px;
+    max-width: calc(100% - 40px);
+    background: var(--surface-transparent);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+    transform-origin: top left;
+    transition: all 0.3s ease;
+    animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: white;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+}
+
+.action-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Floating Location FAB on mobile usually, or bottom right */
+.fab-location {
+    display: none;
+    /* We use the main button for now */
+}
+
+
+/* Station Details Overlay (Side Panel) */
+.station-popup {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    /* Hidden off-screen */
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.station-popup.active {
+    right: 0;
+    display: flex !important;
+    /* Override inline display none if any */
+}
+
+.close-popup {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.close-popup:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+#popupContent {
+    height: 100%;
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+#popupContent h3 {
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    padding-right: 2rem;
+}
+
+#popupContent p {
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+    color: #475569;
+}
+
+#popupContent strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* Status Badges in Popup */
+.status-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-badge.available {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.unavailable {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Action Buttons */
+.popup-actions {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.directions-btn {
+    width: 100%;
+    padding: 1rem;
+    background: darkgreen;
+    /* Blue for navigation */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.user-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.user-actions h4,
+.reviews-section h4 {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.report-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.btn-avail {
+    padding: 0.8rem;
+    background: var(--surface);
+    border: 2px solid #27ae60;
+    color: #27ae60;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-avail:hover {
+    background: #f0fdf4;
+}
+
+.btn-unavail {
+    padding: 0.8rem;
+    background: var(--surface);
+    border: 2px solid #e74c3c;
+    color: #e74c3c;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-unavail:hover {
+    background: #fef2f2;
+}
+
+/* Reviews */
+.reviews-section {
+    margin-top: 2rem;
+}
+
+.reviews-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.review-item {
+    background: #f8fafc;
+    padding: 0.8rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #e2e8f0;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+}
+
+.review-comment {
+    font-size: 0.95rem;
+    color: #334155;
+}
+
+.add-review textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    resize: vertical;
+    min-height: 60px;
+    margin-bottom: 0.5rem;
+    font-family: inherit;
+}
+
+.add-review select {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+}
+
+.add-review button {
+    padding: 0.6rem 1.2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Mobile Responsive Popup */
+@media (max-width: 600px) {
+    .station-popup {
+        right: 0;
+        top: auto;
+        bottom: -100%;
+        width: 100%;
+        height: 80vh;
+        border-radius: 20px 20px 0 0;
+        transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .station-popup.active {
+        bottom: 0;
+    }
+}
+
+
+/* Custom Markers */
+.custom-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.custom-marker.marker-available {
+    background: #27ae60;
+}
+
+.custom-marker.marker-unavailable {
+    background: #e74c3c;
+}
+
+.custom-marker:hover {
+    transform: scale(1.15);
+    z-index: 1000 !important;
+}
+
+@media (max-width: 600px) {
+    .floating-nav {
+        flex-direction: row;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+    }
+
+    .map-logo span {
+        display: none;
+    }
+
+    /* Hide text, keep logo icon if any */
+
+    .search-overlay {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(60%);
+        /* collapsed state initially? or full? let's keep it full but stylized */
+        transform: none;
+        padding-bottom: 2rem;
+    }
+}

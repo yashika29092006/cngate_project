@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Signup - CNGate</title>
+    <link rel="stylesheet" href="../styles/auth.css">
+</head>
+
+<body>
+    <video autoplay loop muted playsinline id="bgVideo">
+        <source src="../assets/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <header>
+        <div class="header-content">
+            <a href="../index.html" class="logo">CNGate</a>
+            <nav>
+                <a href="../pages/about.html" class="nav-link">About</a>
+                <a href="../pages/contact.html" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="auth-container">
+        <a href="../index.html" class="back-link">← Back to Home</a>
+        <h2>User Sign Up</h2>
+        <p>Create your account to get started</p>
+        <form id="userSignupForm">
+            <div class="form-group">
+                <label for="user-signup-name">Full Name</label>
+                <div class="input-wrapper">
+                    <input type="text" id="user-signup-name" placeholder="John Doe" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="user-signup-email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="user-signup-email" placeholder="example@mail.com" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="user-signup-phone">Phone Number</label>
+                <div class="input-wrapper">
+                    <input type="tel" id="user-signup-phone" pattern="[0-9]{10}" placeholder="9876543210" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="user-signup-vehicle">Vehicle Type</label>
+                <div class="input-wrapper">
+                    <select id="user-signup-vehicle" required>
+                        <option value="">Select vehicle type</option>
+                        <option value="auto">Auto</option>
+                        <option value="car">Car</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="user-signup-password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="user-signup-password" placeholder="Min. 6 characters" required
+                        minlength="6">
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+        <div class="auth-switch">
+            Already have an account? <a href="../pages/user-login.html">Login</a>
+        </div>
+    </div>
+
+    <script src="../js/user-signup.js"></script>
+</body>
+
+</html>

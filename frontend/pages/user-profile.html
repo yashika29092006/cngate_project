@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - CNGate</title>
+    <link rel="stylesheet" href="../styles/user-profile.css">
+</head>
+
+<body>
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>User Profile</h2>
+            <div class="avatar-container">
+                <div class="avatar" id="avatarInitials">U</div>
+            </div>
+        </div>
+
+        <div class="profile-body">
+            <div id="loading" style="text-align:center; color:#64748b;">Loading profile...</div>
+            <div id="profileContent" style="display:none;">
+                <div class="info-group">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value" id="p-name"></div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value" id="p-email"></div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value" id="p-phone"></div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Vehicle Type</div>
+                    <div class="info-value" id="p-vehicle"></div>
+                </div>
+
+                <div class="actions">
+                    <a href="user-map.html" class="btn btn-secondary">← Back to Map</a>
+                    <!-- Placeholder for future edit functionality -->
+                    <!-- <button class="btn btn-primary">Edit Profile</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'user-login.html';
+                return;
+            }
+            try {
+                const res = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const user = await res.json();
+
+                    // Populate fields
+                    document.getElementById('p-name').textContent = user.name || 'N/A';
+                    document.getElementById('p-email').textContent = user.email || 'N/A';
+                    document.getElementById('p-phone').textContent = user.phone || 'N/A';
+                    document.getElementById('p-vehicle').textContent = user.vehicle || 'N/A';
+
+                    // Initials
+                    const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                    document.getElementById('avatarInitials').textContent = initial;
+
+                    // Show content
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('profileContent').style.display = 'block';
+                } else {
+                    alert("Failed to load profile. Please login again.");
+                    window.location.href = 'user-login.html';
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').textContent = 'Error loading profile.';
+            }
+        }
+        loadProfile();
+    </script>
+</body>
+
+</html>

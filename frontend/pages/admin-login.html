@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - CNGate</title>
+    <link rel="stylesheet" href="../styles/auth.css">
+</head>
+
+<body>
+    <video autoplay loop muted playsinline id="bgVideo">
+        <source src="../assets/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <header>
+        <div class="header-content">
+            <a href="../index.html" class="logo">CNGate</a>
+            <nav>
+                <a href="../pages/about.html" class="nav-link">About</a>
+                <a href="../pages/contact.html" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="auth-container">
+        <a href="../index.html" class="back-link">← Back to Home</a>
+        <h2>Station Admin Login</h2>
+        <p>Manage your CNG station</p>
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="admin-email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="admin-email" placeholder="admin@station.com" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="admin-password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="admin-password" placeholder="Admin Password" required>
+                </div>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <div class="auth-links">
+                <a href="#" onclick="forgotPassword()">Forgot Password?</a>
+                <p>Don't have an account? <a href="../pages/admin-signup.html">Sign Up</a></p>
+            </div>
+        </form>
+    </div>
+
+    <script src="../js/stations-data.js"></script>
+    <script src="../js/admin-login.js"></script>
+</body>
+
+</html>

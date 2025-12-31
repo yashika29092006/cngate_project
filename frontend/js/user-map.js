@@ -1,0 +1,318 @@
+
+let map;
+let markers = [];
+let userLocationMarker = null;
+
+function initMap() {
+    // Default center (can be adjusted)
+    map = L.map('map').setView([13.0827, 80.2707], 12); // Chennai coordinates as default
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    addStationMarkers();
+}
+
+function addStationMarkers() {
+    const stations = getStations();
+
+    // Clear existing markers
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+
+    stations.forEach(station => {
+        // Check for valid coordinates
+        if (station.lat === null || station.lng === null || station.lat === undefined || station.lng === undefined) {
+            console.warn(`Station ${station.id} (${station.name}) has missing coordinates. Skipping.`);
+            return;
+        }
+
+        const iconClass = station.availability === 'available' ? 'marker-available' : 'marker-unavailable';
+
+        // Custom marker icon
+        const icon = L.divIcon({
+            className: 'custom-marker ' + iconClass,
+            html: '⛽',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        const marker = L.marker([station.lat, station.lng], { icon: icon })
+            .addTo(map)
+            .bindPopup(`<b>${station.name}</b><br>${station.area}`)
+            .on('click', () => showStationDetails(station.id));
+
+        markers.push(marker);
+    });
+}
+
+function showStationDetails(stationId) {
+    const station = getStations().find(s => s.id === stationId);
+    if (!station) return;
+
+    const popup = document.getElementById('stationPopup');
+    const content = document.getElementById('popupContent');
+
+    // Determine crowd badge color
+    let crowdColor = '#f39c12';
+    if (station.crowd === 'Low') crowdColor = '#27ae60';
+    if (station.crowd === 'High') crowdColor = '#c0392b';
+
+    content.innerHTML = `
+        <h3>${station.name}</h3>
+        <p><strong>Area:</strong> ${station.area}</p>
+        <p><strong>Status:</strong> <span class="status-badge ${station.availability}">${station.availability}</span></p>
+        <p><strong>Crowd:</strong> <span style="color:${crowdColor}; font-weight:bold;">${station.crowd || 'Unknown'}</span></p>
+        <p><strong>Quantity:</strong> ${station.quantity || 0} kg</p>
+        <p><strong>Price:</strong> ₹${station.price}/kg</p>
+        <p><strong>Timing:</strong> ${station.timing}</p>
+        <p><strong>Last Updated:</strong> ${new Date(station.last_updated).toLocaleString()}</p>
+        
+        <div class="popup-actions">
+            <button onclick="getDirections(${station.lat}, ${station.lng})" class="directions-btn">Get Directions</button>
+            <div class="user-actions">
+                <h4>Report Status</h4>
+                <div class="report-buttons">
+                     <button onclick="reportAvailability(${station.id}, 'available')" class="btn-avail">Available</button>
+                     <button onclick="reportAvailability(${station.id}, 'unavailable')" class="btn-unavail">Unavailable</button>
+                </div>
+            </div>
+            <div class="reviews-section">
+                <h4>Reviews</h4>
+                <div id="reviewsList" class="reviews-list">Loading reviews...</div>
+                <div class="add-review">
+                    <select id="reviewRating">
+                        <option value="5">5 ⭐</option>
+                        <option value="4">4 ⭐</option>
+                        <option value="3">3 ⭐</option>
+                        <option value="2">2 ⭐</option>
+                        <option value="1">1 ⭐</option>
+                    </select>
+                    <textarea id="reviewComment" placeholder="Write a review..."></textarea>
+                    <button onclick="submitReview(${station.id})">Post Review</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    popup.classList.add('active');
+    fetchReviews(stationId);
+}
+
+function closeStationPopup() {
+    document.getElementById('stationPopup').classList.remove('active');
+}
+
+function getDirections(lat, lng) {
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+}
+
+function searchStations() {
+    const searchTerm = document.getElementById('searchStation').value.toLowerCase();
+    const availabilityFilter = document.getElementById('availabilityFilter').value;
+    const crowdFilter = document.getElementById('crowdFilter').value;
+
+    const stations = getStations();
+
+    let filteredStations = stations.filter(station =>
+    (station.name.toLowerCase().includes(searchTerm) ||
+        station.area.toLowerCase().includes(searchTerm) ||
+        station.address.toLowerCase().includes(searchTerm))
+    );
+
+    if (availabilityFilter !== 'all') {
+        filteredStations = filteredStations.filter(station => station.availability === availabilityFilter);
+    }
+
+    if (crowdFilter !== 'all') {
+        // Assuming crowd is stored as 'Low', 'Moderate', 'High' or similar case-insensitive match might be safer
+        filteredStations = filteredStations.filter(station =>
+            (station.crowd && station.crowd.toLowerCase() === crowdFilter.toLowerCase())
+        );
+    }
+
+    // Refresh markers
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+
+    filteredStations.forEach(station => {
+        // Check for valid coordinates
+        if (station.lat === null || station.lng === null || station.lat === undefined || station.lng === undefined) {
+            console.warn(`Station ${station.id} (${station.name}) has missing coordinates. Skipping.`);
+            return;
+        }
+
+        const iconClass = station.availability === 'available' ? 'marker-available' : 'marker-unavailable';
+        const icon = L.divIcon({
+            className: 'custom-marker ' + iconClass,
+            html: '⛽',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        const marker = L.marker([station.lat, station.lng], { icon: icon })
+            .addTo(map)
+            .bindPopup(`<b>${station.name}</b>`)
+            .on('click', () => showStationDetails(station.id));
+
+        markers.push(marker);
+    });
+
+    if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
+}
+
+// --- Interaction Functions ---
+
+async function fetchReviews(stationId) {
+    try {
+        const res = await fetch(`/api/reviews/${stationId}`);
+        const reviews = await res.json();
+        const list = document.getElementById('reviewsList');
+        if (reviews.length === 0) {
+            list.innerHTML = '<p style="color: #666; font-style: italic;">No reviews yet.</p>';
+            return;
+        }
+        list.innerHTML = reviews.map(r => `
+            <div class="review-item">
+                <div class="review-header">
+                    <strong>${r.user_email || 'User'}</strong> 
+                    <span class="rating">${'⭐'.repeat(r.rating)}</span>
+                </div>
+                <div class="review-comment">${r.comment}</div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+        document.getElementById('reviewsList').innerHTML = 'Error loading reviews.';
+    }
+}
+
+async function submitReview(stationId) {
+    const rating = document.getElementById('reviewRating').value;
+    const comment = document.getElementById('reviewComment').value;
+    const token = sessionStorage.getItem('token');
+
+    if (!token) {
+        alert("Please login to submit a review");
+        window.location.href = 'user-login.html';
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/reviews/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ station_id: stationId, rating: parseFloat(rating), comment })
+        });
+        if (res.ok) {
+            alert("Review submitted!");
+            document.getElementById('reviewComment').value = '';
+            fetchReviews(stationId);
+        } else {
+            const err = await res.json();
+            alert(err.detail || "Failed to submit review");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error submitting review");
+    }
+}
+
+async function reportAvailability(stationId, availability) {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+        alert("Please login to report availability");
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/stations/${stationId}/report-availability`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ availability })
+        });
+        if (res.ok) {
+            alert("Report submitted! It will appear after admin approval.");
+            // Do not refresh immediate UI as it is pending
+        } else {
+            const err = await res.json();
+            alert(err.detail || "Failed to report availability");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error reporting availability");
+    }
+}
+
+
+
+function showNearbyAvailable() {
+    if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser');
+        return;
+    }
+
+    // Show loading state if needed, but alert is instant
+    navigator.geolocation.getCurrentPosition(position => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+
+        if (userLat === null || userLng === null || userLat === undefined || userLng === undefined) {
+            alert('Unable to determine accurate coordinates.');
+            return;
+        }
+
+        // Center map on user
+        map.setView([userLat, userLng], 13);
+
+        // Add or update user marker
+        if (userLocationMarker) {
+            map.removeLayer(userLocationMarker);
+        }
+        userLocationMarker = L.marker([userLat, userLng], {
+            icon: L.divIcon({
+                className: 'user-marker',
+                html: '📍',
+                iconSize: [30, 30]
+            })
+        }).addTo(map).bindPopup("You are here").openPopup();
+
+        // Filter and show only available
+        document.getElementById('availabilityFilter').value = 'available';
+        // Reset crowd filter to see everything nearby usually? Or keep it? keeping it is better UX if they selected it.
+        // But the request says "Show nearby available stations", implying availability is the key.
+
+        searchStations();
+    }, (err) => {
+        console.error(err);
+        alert('Unable to retrieve your location. Please check browser permissions.');
+    });
+}
+
+function logout() {
+    sessionStorage.removeItem('currentUser');
+    sessionStorage.removeItem('token');
+    window.location.href = '../../index.html';
+}
+
+// Initialize
+window.addEventListener('load', async function () {
+    await ensureStationsLoaded();
+    initMap();
+
+    // Check if we should show nearby stations automatically
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('nearby') === 'true') {
+        setTimeout(showNearbyAvailable, 500);
+    }
+});
