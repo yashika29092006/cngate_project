@@ -400,3 +400,67 @@ body {
         padding: 2rem;
     }
 }
+
+@media (max-width: 768px) {
+    .dashboard-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        top: 0;
+        padding: 0.75rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--sidebar-bg);
+    }
+
+    .sidebar-logo {
+        margin-bottom: 0;
+        font-size: 1.1rem;
+        padding-left: 0.5rem;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        gap: 0.5rem;
+        flex: none;
+        overflow-x: auto;
+    }
+
+    .nav-link {
+        padding: 0.5rem 0.75rem;
+        white-space: nowrap;
+        font-size: 0.85rem;
+    }
+
+    .logout-btn-sidebar {
+        margin-top: 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1.5rem 1rem;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .welcome-msg h1 {
+        font-size: 1.5rem;
+    }
+
+    .stats-grid,
+    .stations-grid {
+        grid-template-columns: 1fr;
+    }
+}
