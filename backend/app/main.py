@@ -28,8 +28,23 @@ def root():
 
 @app.get("/health")
 def health_check():
-    init_db()
-    return {"status": "ok", "message": "CNGate Backend is running on Vercel"}
+    from app.database.db import DATABASE_URL
+    import urllib.parse
+    
+    # Extract host for debugging (omitting password for security)
+    db_host = "Unknown"
+    try:
+        if DATABASE_URL:
+            parsed = urllib.parse.urlparse(DATABASE_URL)
+            db_host = parsed.hostname
+    except:
+        pass
+
+    return {
+        "status": "ok", 
+        "message": "CNGate Backend is running",
+        "database_host": db_host
+    }
 
 app.include_router(user.router)
 app.include_router(admin.router)

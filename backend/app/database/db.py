@@ -23,7 +23,7 @@ engine = create_engine(
     max_overflow=10,      # Allow more connections during bursts
     pool_recycle=300,     # Recycle connections every 5 minutes
     connect_args={
-        "connect_timeout": 10,
+        "connect_timeout": 5, # Fail fast (5 seconds)
         "sslmode": "require"
     }
 )
