@@ -24,9 +24,9 @@ except Exception as e:
 def health_check():
     return {"status": "ok", "message": "CNGate Backend is running on Vercel"}
 
-app.include_router(user.router, prefix="/api")
-app.include_router(admin.router, prefix="/api")
-app.include_router(station.router, prefix="/api")
-app.include_router(review.router, prefix="/api")
-app.include_router(contact.router, prefix="/api")
-app.include_router(super_admin.router, prefix="/api")
+app.include_router(user.router)
+app.include_router(admin.router)
+app.include_router(station.router)
+app.include_router(review.router)
+app.include_router(contact.router)
+app.include_router(super_admin.router)
