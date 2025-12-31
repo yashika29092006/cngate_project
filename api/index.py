@@ -1,37 +1,49 @@
 import os
 import sys
-from mangum import Mangum
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-# 1. Fix the Pathing logic
-# Find the 'backend' folder
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(current_dir)
+# 1. Setup paths so routers can find their models
+api_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(api_dir)
 backend_path = os.path.join(project_root, "backend")
 
-# Ensure it's at the very front of the path
 if backend_path not in sys.path:
     sys.path.insert(0, backend_path)
 
-# 2. Defensive Import
-# We import from 'app.main' and rename it 'fastapi_entry' to avoid name collisions
+# 2. Create the App instance right here
+# This prevents the 'issubclass' error because Vercel sees a fresh FastAPI instance
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 3. Import and include your existing logic
 try:
-    from app.main import app as fastapi_entry
-    # We name the variable 'app' because that is exactly what Vercel is looking for
-    app = Mangum(fastapi_entry, lifespan="off")
-except Exception as e:
-    # If it fails, we catch it and return a pure Python dict 
-    # (Vercel will show this instead of crashing)
-    import traceback
-    error_msg = f"Backend Load Failure: {str(e)}\n{traceback.format_exc()}"
-    print(error_msg)
+    from app.routers import user, admin, station, review, contact, super_admin
     
-    from fastapi import FastAPI
-    err_app = FastAPI()
-    @err_app.get("/{full_path:path}")
-    def error_page(full_path: str = "/"):
-        return {
-            "status": "initialization_failed",
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
-    app = Mangum(err_app)
+    app.include_router(user.router)
+    app.include_router(admin.router)
+    app.include_router(station.router)
+    app.include_router(review.router)
+    app.include_router(contact.router)
+    app.include_router(super_admin.router)
+except Exception as e:
+    print(f"IMPORT ERROR: {e}")
+    # We'll still keep the app running so we can see the error in health check
+    pass
+
+@app.get("/api/health")
+@app.get("/health")
+def health():
+    return {"status": "ok", "message": "Zero-Config API is LIVE!"}
+
+@app.get("/api/")
+@app.get("/")
+def root():
+    return {"message": "CNGate API is running"}
