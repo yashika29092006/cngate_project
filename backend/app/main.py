@@ -3,7 +3,7 @@ from app.database.db import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import user, admin, station, review, contact, super_admin
 
-app = FastAPI(title="CNGate Backend")
+app = FastAPI(title="CNGate Backend", root_path="/api")
 
 app.add_middleware(
     CORSMiddleware,
