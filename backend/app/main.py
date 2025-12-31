@@ -20,7 +20,7 @@ except Exception as e:
     print(f"Warning: Could not create tables: {e}")
 
 
-@app.get("/api/health")
+@app.get("/health")
 def health_check():
     return {"status": "ok", "message": "CNGate Backend is running on Vercel"}
 
