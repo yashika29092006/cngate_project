@@ -3,8 +3,6 @@ from app.database.db import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import user, admin, station, review, contact, super_admin
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title="CNGate Backend")
 
 app.add_middleware(
@@ -14,6 +12,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Try to create tables, but don't crash if it fails
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"Warning: Could not create tables: {e}")
+
 
 @app.get("/api/health")
 def health_check():
