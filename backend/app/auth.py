@@ -7,13 +7,15 @@ from fastapi.security import OAuth2PasswordBearer
 import os
 from dotenv import load_dotenv
 
-# Load .env file
-load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
+# Load .env file only if it exists
+env_path = os.path.join(os.path.dirname(__file__), "../../.env")
+if os.path.exists(env_path):
+    load_dotenv(env_path)
 
 # Secret key to sign the JWT token
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-replace-in-production")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 1440))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
