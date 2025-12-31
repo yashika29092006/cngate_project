@@ -23,8 +23,8 @@ function getStations() {
     return cachedStations;
 }
 
-function ensureStationsLoaded() {
-    if (loaded) return Promise.resolve(cachedStations);
+function ensureStationsLoaded(force = false) {
+    if (loaded && !force) return Promise.resolve(cachedStations);
     return fetchStations();
 }
 

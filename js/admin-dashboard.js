@@ -263,7 +263,7 @@ async function resolveRequest(reqId, action) {
             alert(`Request ${action}d`);
             fetchRequests();
             if (action === 'approve') {
-                await ensureStationsLoaded(); // refresh cache
+                await ensureStationsLoaded(true); // force refresh cache
                 renderAdminDashboard(); // update UI
             }
         } else {
