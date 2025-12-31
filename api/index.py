@@ -1,8 +1,8 @@
-import os
-import sys
-from mangum import Mangum
-
 try:
+    import os
+    import sys
+    from mangum import Mangum
+
     # Add backend to path
     backend_path = os.path.join(os.path.dirname(__file__), "..", "backend")
     if backend_path not in sys.path:
