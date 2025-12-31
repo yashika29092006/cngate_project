@@ -1,38 +1,23 @@
 import os
 import sys
-from mangum import Mangum
 
-# 1. SETUP THE PATH
-# We move into the 'backend' directory so that 'import app' works naturally.
+# 1. Setup absolute paths
+# Identify the 'backend' directory relative to this file (api/index.py)
 api_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(api_dir)
-backend_dir = os.path.join(project_root, "backend")
+backend_path = os.path.join(project_root, "backend")
 
-# Ensure the backend directory is at the VERY FRONT of the path
-if backend_dir not in sys.path:
-    sys.path.insert(0, backend_dir)
+# 2. Inject backend into the system path
+if backend_path not in sys.path:
+    sys.path.insert(0, backend_path)
 
-# 2. THE IMPORT
+# 3. Import the FastAPI app instance directly
+# Vercel's Python runtime (3.9+) automatically detects FastAPI objects named 'app'
 try:
-    # This imports backend/app/main.py
-    from app.main import app as fastapi_app
-    # Bridge FastAPI and Vercel/Lambda
-    handler = Mangum(fastapi_app, lifespan="off")
+    from app.main import app
 except Exception as e:
+    # If it fails, we need to know why (missing module, syntax error, etc.)
     import traceback
-    from fastapi import FastAPI
-    
-    # Emergency error reporter
-    error_app = FastAPI()
-    @error_app.get("/{full_path:path}")
-    def fallback(full_path: str = "/"):
-        return {
-            "status": "error",
-            "message": "The backend failed to load. Check the traceback below.",
-            "error_detail": str(e),
-            "traceback": traceback.format_exc()
-        }
-    handler = Mangum(error_app)
-
-# Vercel looks for the 'app' variable by default
-app = handler
+    print(f"CRITICAL: Backend failed to load: {e}")
+    print(traceback.format_exc())
+    raise e
