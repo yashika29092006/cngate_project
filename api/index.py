@@ -12,8 +12,8 @@ if backend_path not in sys.path:
     sys.path.insert(0, backend_path)
 
 # 2. Create the App instance right here
-# This prevents the 'issubclass' error because Vercel sees a fresh FastAPI instance
-app = FastAPI()
+# We set root_path="/api" so that FastAPI knows it's living under the /api/ folder
+app = FastAPI(root_path="/api")
 
 app.add_middleware(
     CORSMiddleware,
