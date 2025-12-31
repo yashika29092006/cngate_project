@@ -1,41 +1,41 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import user, admin, station, review, contact, super_admin
 
+# Use local imports inside the lifespan to prevent startup crashes
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # This runs when the app starts
+    # This only runs when the FIRST request comes in
     try:
-        from app.database.db import Base, engine
-        # Tables aren't usually created on every start in production, 
-        # but kept here for now to ensure DB is ready.
-        # Base.metadata.create_all(bind=engine) 
+        from app.database.db import engine, Base
+        # Base.metadata.create_all(bind=engine) # Optional: create tables
     except Exception as e:
-        print(f"Startup warning: {e}")
+        print(f"Startup DB Warning: {e}")
     yield
-    # This runs when the app stops
 
 app = FastAPI(title="CNGate Backend", lifespan=lifespan)
 
-# CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # More permissive for debugging
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.get("/")
-def root():
-    return {"status": "ok", "message": "CNGate Backend is running"}
-
+# Standard Health Endpoints
 @app.get("/api/health")
 @app.get("/health")
-def health_check():
-    return {"status": "ok", "message": "CNGate Backend is active"}
+def health():
+    return {"status": "ok", "message": "Backend is running on Vercel!"}
 
+@app.get("/api/")
+@app.get("/")
+def root():
+    return {"message": "CNGate API Root"}
+
+# Routers (Lazy import inside the file)
+from app.routers import user, admin, station, review, contact, super_admin
 app.include_router(user.router)
 app.include_router(admin.router)
 app.include_router(station.router)
