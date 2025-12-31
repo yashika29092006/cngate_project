@@ -6,9 +6,10 @@ from app.routers import user, admin, station, review, contact, super_admin
 # Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="CNGate Backend")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["https://cngate-frontend.netlify.app"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
