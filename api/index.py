@@ -2,28 +2,34 @@ import os
 import sys
 from mangum import Mangum
 
-# 1. Path Setup: Ensure the 'backend' folder is visible
-backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "backend"))
-if backend_path not in sys.path:
-    sys.path.insert(0, backend_path)
+# Get the absolute path to the project root
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# 2. Safety Import: Try to load the app, if it fails, provide a clear error message
+# Add the project root to sys.path
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+# Add the backend directory to sys.path specifically so 'app' can be found
+BACKEND_DIR = os.path.join(ROOT_DIR, "backend")
+if BACKEND_DIR not in sys.path:
+    sys.path.insert(0, BACKEND_DIR)
+
 try:
+    # This should now work regardless of Vercel's working directory
     from app.main import app as fastapi_app
-    # Bridge FastAPI and Vercel
     app = Mangum(fastapi_app, lifespan="off")
 except Exception as e:
     import traceback
     from fastapi import FastAPI
     
-    # Emergency fallback app
     error_app = FastAPI()
     @error_app.get("/{full_path:path}")
     def fallback(full_path: str = "/"):
         return {
-            "status": "error",
-            "message": "The backend failed to initialize. This is usually due to a broken DATABASE_URL.",
-            "error_detail": str(e),
-            "traceback": traceback.format_exc()
+            "status": "initialization_failed",
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "detected_root": ROOT_DIR,
+            "sys_path": sys.path
         }
     app = Mangum(error_app)
