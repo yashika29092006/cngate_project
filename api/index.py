@@ -8,28 +8,22 @@ try:
     if backend_path not in sys.path:
         sys.path.insert(0, backend_path)
 
-    from app.main import app
-    # Mangum is an adapter for running ASGI applications (like FastAPI) on AWS Lambda and Vercel
-    handler = Mangum(app, lifespan="off")
+    from app.main import app as fastapi_app
+    # Bridge FastAPI and Vercel/Lambda
+    app = Mangum(fastapi_app, lifespan="off")
+
 except Exception as e:
     import traceback
     error_details = traceback.format_exc()
-    print(f"Error initializing application: {e}")
-    print(error_details)
-    # Fallback to a simple app if the main one fails to load
     from fastapi import FastAPI
-    error_app = FastAPI()
+    from mangum import Mangum
     
-    @error_app.get("/")
+    error_app = FastAPI()
     @error_app.get("/{full_path:path}")
-    def error_fallback(full_path: str = "/"):
+    def fallback(full_path: str = "/"):
         return {
-            "error": "Backend Initialization Failed", 
-            "detail": str(e),
-            "cwd": os.getcwd(),
-            "dir_contents": os.listdir(os.getcwd()),
-            "backend_path": backend_path,
-            "sys_path": sys.path,
+            "status": "initialization_failed",
+            "error": str(e),
             "traceback": error_details
         }
-    handler = Mangum(error_app)
+    app = Mangum(error_app)
