@@ -26,6 +26,10 @@ except Exception as e:
         return {
             "error": "Backend Initialization Failed", 
             "detail": str(e),
+            "cwd": os.getcwd(),
+            "dir_contents": os.listdir(os.getcwd()),
+            "backend_path": backend_path,
+            "sys_path": sys.path,
             "traceback": error_details
         }
     handler = Mangum(error_app)
