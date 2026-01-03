@@ -9,7 +9,7 @@
   --text-light: #64748b;
   --bg-light: #f8fafc;
   --white: #ffffff;
-  --gradient: linear-gradient(135deg, #0a4a19 0%, #166534 100%);
+  --gradient: #0a4a19;
   --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
   --radius: 16px;
 }
@@ -28,7 +28,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Header/Nav */
 header {
   width: 100%;
   position: absolute;

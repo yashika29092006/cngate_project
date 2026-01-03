@@ -49,6 +49,26 @@
         </form>
     </div>
 
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('forgotPasswordModal')">&times;</span>
+            <h3>Reset Password</h3>
+            <p>Enter your email and new password to reset.</p>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="reset-email">Email Address</label>
+                    <input type="email" id="reset-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reset-new-password">New Password</label>
+                    <input type="password" id="reset-new-password" placeholder="Enter new password" required>
+                </div>
+                <button type="submit" class="login-btn">Reset Password</button>
+            </form>
+        </div>
+    </div>
+
     <script src="../js/user-login.js"></script>
 </body>
 

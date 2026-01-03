@@ -38,26 +38,58 @@ if (form) {
     });
 }
 
-async function forgotPassword() {
-    const email = prompt("Enter your registered admin email:");
-    if (!email) return;
-    const newPassword = prompt("Enter new password:");
-    if (!newPassword) return;
+function forgotPassword() {
+    const modal = document.getElementById('forgotPasswordModal');
+    if (modal) modal.classList.add('active');
+}
 
-    try {
-        const response = await fetch('/api/admin/forgot-password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password: newPassword })
-        });
-        const data = await response.json();
-        if (response.ok) {
-            alert(data.message);
-        } else {
-            alert(data.detail);
-        }
-    } catch (err) {
-        console.error(err);
-        alert("An error occurred");
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('active');
+}
+
+// Close modal if clicking outside - using addEventListener
+window.addEventListener('click', function (event) {
+    const modal = document.getElementById('forgotPasswordModal');
+    if (modal && event.target == modal) {
+        modal.classList.remove('active');
     }
+});
+
+// Handle Forgot Password Form
+const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+if (forgotPasswordForm) {
+    forgotPasswordForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const email = document.getElementById('reset-email').value;
+        const password = document.getElementById('reset-new-password').value;
+
+        try {
+            const response = await fetch('/api/admin/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                console.error("Non-JSON response:", text);
+                throw new Error("Server returned non-JSON response. Check server logs.");
+            }
+
+            if (response.ok) {
+                alert(data.message || 'Admin password reset successful!');
+                closeModal('forgotPasswordModal');
+            } else {
+                alert(data.detail || 'Failed to reset admin password');
+            }
+        } catch (err) {
+            console.error("Forgot Password Error:", err);
+            alert("Error: " + err.message);
+        }
+    });
 }
