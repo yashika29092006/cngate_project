@@ -59,31 +59,38 @@ if (forgotPasswordForm) {
         const password = document.getElementById('reset-new-password').value;
 
         try {
+            console.log("Sending forgot password request to /api/user/forgot-password...");
             const response = await fetch('/api/user/forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
 
-            let data;
+            console.log("Response status:", response.status);
             const contentType = response.headers.get("content-type");
+            console.log("Content-Type:", contentType);
+
             if (contentType && contentType.includes("application/json")) {
-                data = await response.json();
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message || 'Password reset successful!');
+                    closeModal('forgotPasswordModal');
+                } else {
+                    alert(data.detail || 'Failed to reset password');
+                }
             } else {
                 const text = await response.text();
-                console.error("Non-JSON response:", text);
-                throw new Error("Server returned non-JSON response. Check server logs.");
-            }
+                console.error("Non-JSON Response Snippet:", text.substring(0, 200));
 
-            if (response.ok) {
-                alert(data.message || 'Password reset successful!');
-                closeModal('forgotPasswordModal');
-            } else {
-                alert(data.detail || 'Failed to reset password');
+                if (response.status === 404) {
+                    alert("Error 404: The reset password endpoint was not found. Please check if the backend server is running correctly and the path /api/user/forgot-password exists.");
+                } else {
+                    alert("Server Error (" + response.status + "): Could not process the request. Please check the browser console for details.");
+                }
             }
         } catch (err) {
-            console.error("Forgot Password Error:", err);
-            alert("Error: " + err.message);
+            console.error("Fetch Error:", err);
+            alert("Connection Error: " + err.message);
         }
     });
 }
