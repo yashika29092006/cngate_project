@@ -40,7 +40,7 @@ function addStationMarkers() {
 
         const marker = L.marker([station.lat, station.lng], { icon: icon })
             .addTo(map)
-            .bindPopup(`<b>${station.name}</b><br>${station.area}`)
+            .bindPopup(`<b>${station.name}</b><br>${station.area}`)//shows pop when user clicked marker
             .on('click', () => showStationDetails(station.id));
 
         markers.push(marker);
@@ -54,7 +54,7 @@ function showStationDetails(stationId) {
     const popup = document.getElementById('stationPopup');
     const content = document.getElementById('popupContent');
 
-    // Determine crowd badge color
+    //crowd badge color
     let crowdColor = '#f39c12';
     if (station.crowd === 'Low') crowdColor = '#27ae60';
     if (station.crowd === 'High') crowdColor = '#c0392b';
@@ -289,8 +289,6 @@ function showNearbyAvailable() {
 
         // Filter and show only available
         document.getElementById('availabilityFilter').value = 'available';
-        // Reset crowd filter to see everything nearby usually? Or keep it? keeping it is better UX if they selected it.
-        // But the request says "Show nearby available stations", implying availability is the key.
 
         searchStations();
     }, (err) => {

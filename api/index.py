@@ -5,7 +5,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-# 1. Setup paths so routers can find their models
+# Setup paths so routers can find their models
 api_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(api_dir)
 backend_path = os.path.join(project_root, "backend")
@@ -13,10 +13,9 @@ backend_path = os.path.join(project_root, "backend")
 if backend_path not in sys.path:
     sys.path.insert(0, backend_path)
 
-# 2. Database Initialization logic
+# Database Initialization logic
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # This runs on startup
     try:
         from app.database.db import engine, Base
         # Force table creation on startup
@@ -26,7 +25,7 @@ async def lifespan(app: FastAPI):
         print(f"Startup Database Error: {e}")
     yield
 
-# 3. Create the App instance
+# Create the App instance
 app = FastAPI(root_path="/api", lifespan=lifespan)
 
 app.add_middleware(
@@ -37,7 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 4. Import and include your existing logic
+# Import and include your existing logic
 try:
     from app.routers import user, admin, station, review, contact, super_admin
     
@@ -52,7 +51,7 @@ except Exception as e:
     print(f"IMPORT ERROR: {e}")
     print(traceback.format_exc())
 
-# 5. Diagnostic Endpoints
+# Endpoints
 @app.get("/api/health")
 @app.get("/health")
 def health():
@@ -68,7 +67,7 @@ def health():
     
     return {
         "status": "ok", 
-        "message": "Zero-Config API is LIVE!",
+        "message": "Zero-Config API is LIVE",
         "database": db_status
     }
 

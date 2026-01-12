@@ -46,8 +46,7 @@ def delete_station(station_id: int, db: Session = Depends(get_db), current_admin
     station = db.query(Station).filter(Station.id == station_id).first()
     if not station:
         raise HTTPException(status_code=404, detail="Station not found")
-
-    # Delete associated reviews first to satisfy foreign key constraints
+        
     db.query(Review).filter(Review.station_id == station_id).delete()
     db.query(AvailabilityRequest).filter(AvailabilityRequest.station_id == station_id).delete()
 

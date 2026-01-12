@@ -34,7 +34,7 @@ def user_login(user: UserLogin, db: Session = Depends(get_db)):
 
     if not u or not verify_password(user.password, u.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
-
+# create jwt token here
     access_token = create_access_token(data={"sub": u.email, "role": "user"})
     return {
         "access_token": access_token, 

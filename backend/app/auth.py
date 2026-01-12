@@ -7,12 +7,9 @@ from fastapi.security import OAuth2PasswordBearer
 import os
 from dotenv import load_dotenv
 
-# Load .env file only if it exists
 env_path = os.path.join(os.path.dirname(__file__), "../../.env")
 if os.path.exists(env_path):
     load_dotenv(env_path)
-
-# Secret key to sign the JWT token
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-replace-in-production")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
@@ -30,8 +27,6 @@ def verify_password(plain_password: str, hashed_password: str):
         return False
 
 def get_password_hash(password: str):
-    # Use bcrypt directly to avoid passlib compatibility issues
-    # Hashing with a salt and returning the decoded string
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password.encode('utf-8')[:72], salt)
     return hashed.decode('utf-8')

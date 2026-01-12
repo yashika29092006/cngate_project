@@ -1,111 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Find CNG Stations - CNGate</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="../styles/user-map.css">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="../styles/user-map.css" />
     <style>
-        .filter-actions {
-            margin-top: 0.5rem;
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+      .filter-actions {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
 
-        .filter-select {
-            flex: 1;
-            padding: 0.6rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            outline: none;
-            font-size: 0.9rem;
-        }
+      .filter-select {
+        flex: 1;
+        padding: 0.6rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+        font-size: 0.9rem;
+      }
 
-        .nearby-btn {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+      .nearby-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
 
-        .nearby-btn:hover {
-            background: #219150;
-        }
+      .nearby-btn:hover {
+        background: #219150;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- Floating Header -->
     <div class="floating-nav">
-        <div class="map-logo">
-            <span><b>CNGate</b></span>
-        </div>
-        <div class="nav-actions">
-            <a href="user-profile.html" class="profile-link"><b>Profile</b></a>
-            <button class="logout-btn" onclick="logout()">Logout</button>
-        </div>
+      <div class="map-logo">
+        <span><b>CNGate</b></span>
+      </div>
+      <div class="nav-actions">
+        <a href="user-profile.html" class="profile-link"><b>Profile</b></a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
     </div>
 
     <!-- Floating Search Panel -->
     <div class="search-overlay">
-        <div class="search-box">
-            <input type="text" id="searchStation" placeholder="Search by name or area..." onkeyup="searchStations()">
-        </div>
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchStation"
+          placeholder="Search by name or area..."
+          onkeyup="searchStations()"
+        />
+      </div>
 
-        <div class="filters">
-            <select id="availabilityFilter" onchange="searchStations()" class="filter-select">
-                <option value="all">All Status</option>
-                <option value="available">Available</option>
-                <option value="unavailable">Unavailable</option>
-            </select>
-            <select id="crowdFilter" onchange="searchStations()" class="filter-select">
-                <option value="all">All Crowd</option>
-                <option value="Low">Low</option>
-                <option value="Moderate">Moderate</option>
-                <option value="High">High</option>
-            </select>
-        </div>
+      <div class="filters">
+        <select
+          id="availabilityFilter"
+          onchange="searchStations()"
+          class="filter-select"
+        >
+          <option value="all">All Status</option>
+          <option value="available">Available</option>
+          <option value="unavailable">Unavailable</option>
+        </select>
+        <select
+          id="crowdFilter"
+          onchange="searchStations()"
+          class="filter-select"
+        >
+          <option value="all">All Crowd</option>
+          <option value="Low">Low</option>
+          <option value="Moderate">Moderate</option>
+          <option value="High">High</option>
+        </select>
+      </div>
 
-        <button onclick="showNearbyAvailable()" class="action-btn">
-            Find Nearby Available
-        </button>
+      <button onclick="showNearbyAvailable()" class="action-btn">
+        Find Nearby Available
+      </button>
     </div>
 
     <!-- Fullscreen Map -->
     <div id="map"></div>
 
     <!-- Hidden Popup Container (logic handles this but we need the div for JS references if used) -->
-    <div id="stationPopup" class="station-popup" style="display:none;">
-        <!-- Logic uses Leaflet popups mostly, but previously we had a custom overlay. 
-             If the previous JS used a custom overlay 'stationPopup' outside the map, I should keep it or adapt JS.
-             The previous JS used `document.getElementById('stationPopup').classList.add('active');`.
-             I will keep the ID but style it as a hidden component if I switch to Leaflet popups or keep the overlay?
-             The USER REQUEST is "make user map page as more interative". Leaflet native popups are good but a slide-up panel is more mobile app like.
-             However, the CSS I wrote supports `leaflet-popup-content`. 
-             Let's check the JS: it does `popup.classList.add('active')`. This implies an overlay.
-             I will stick to the overlay approach for "Station Details" to allow rich interaction (reviews etc), 
-             BUT I will style it better.
-        -->
-        <button class="close-popup" onclick="closeStationPopup()">X</button>
-        <div id="popupContent"></div>
+    <div id="stationPopup" class="station-popup" style="display: none">
+      <button class="close-popup" onclick="closeStationPopup()">X</button>
+      <div id="popupContent"></div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="../js/stations-data.js"></script>
     <script src="../js/user-map.js"></script>
-</body>
-<!-- <footer>
-    <h3>Footer</h3>
-</footer> -->
-
+  </body>
 </html>

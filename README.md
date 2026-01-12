@@ -1,28 +1,28 @@
-# ⛽ CNGate: Find CNG without the headache
+#  CNGate: Find CNG without the headache
 
 Ever been driving around with a low tank, wondering if the next CNG station actually has gas or if there's a mile-long line? That’s why I built **CNGate**. It’s a simple, smart way to check station status in real-time so you don't waste time driving to a closed pump.
 
 ---
 
-## 🚀 What can you do with it?
+## What can you do with it?
 
-### For the everyday driver 🚗
+### For the everyday driver 
 *   **Live Map:** No more guessing locations. Open the map, see the pins, and find the closest station.
 *   **Know before you go:** See if they have gas (Available/Unavailable) and how busy it is (Low/High crowd) before you even leave your house.
 *   **Real Feedback:** Read reviews from other drivers who were just there. If a station is out of gas, someone's probably already posted about it.
 
-### For the Station Owners ⛽
+### For the Station Owners 
 *   **Update your status:** One tap to let people know you're open or if you've run out of gas for the day.
 *   **Manage your crowd:** Keep traffic moving by updating crowd levels.
 *   **Professional Look:** Your dashboard is clean, fast, and stays synced with the map everyone else sees.
 
-### For the Admins 🛠️
+### For the Admins 
 *   **Quality Control:** Approve new stations and keep the data clean.
 *   **Support:** Answer user questions directly from the admin panel.
 
 ---
 
-## � The Tech Behind It
+##  The Tech Behind It
 
 I kept things modern and fast:
 *   **Backend:** Python via **FastAPI** (it's super quick and reliable).
@@ -32,7 +32,7 @@ I kept things modern and fast:
 
 ---
 
-## �️ How to get it running
+## How to get it running
 
 ### 1. The Backend (Python)
 First, hop into the backend folder:
@@ -63,10 +63,9 @@ You don't need to install anything! Just open `index.html` in your browser. (If 
 
 ---
 
-## 🎨 A note on the design
+##  A note on the design
 I didn't want this to look like a boring database. I went with a **"High-end SaaS"** look:
 *   Deep forest greens and emeralds (feels eco-friendly).
-*   Glassmorphism (the "glassy" look for headers).
 *   Outfit font (it's clean and easy on the eyes).
 
-Enjoy using CNGate! ⛽✨
+Enjoy using CNGate! 

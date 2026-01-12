@@ -2,13 +2,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# Use local imports inside the lifespan to prevent startup crashes
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # This only runs when the FIRST request comes in
+    
     try:
         from app.database.db import engine, Base
-        # Base.metadata.create_all(bind=engine) # Optional: create tables
     except Exception as e:
         print(f"Startup DB Warning: {e}")
     yield
@@ -23,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Standard Health Endpoints
+# checking backend
 @app.get("/api/health")
 @app.get("/health")
 def health():
@@ -33,8 +31,6 @@ def health():
 @app.get("/")
 def root():
     return {"message": "CNGate API Root"}
-
-# Routers (Lazy import inside the file)
 from app.routers import user, admin, station, review, contact, super_admin
 app.include_router(user.router)
 app.include_router(admin.router)
