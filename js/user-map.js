@@ -326,55 +326,13 @@ window.addEventListener('load', async function () {
         const nearbyBtn = document.querySelector('.action-btn');
         setTimeout(() => showNearbyAvailable(nearbyBtn), 500);
     }
-
-    // Search listeners
-    const searchInput = document.getElementById('searchStation');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', searchStations);
-    }
-
-    const availabilityFilter = document.getElementById('availabilityFilter');
-    if (availabilityFilter) {
-        availabilityFilter.addEventListener('change', searchStations);
-    }
-
-    const crowdFilter = document.getElementById('crowdFilter');
-    if (crowdFilter) {
-        crowdFilter.addEventListener('change', searchStations);
-    }
-
-    const nearbyBtn = document.querySelector('.action-btn');
-    if (nearbyBtn) {
-        nearbyBtn.addEventListener('click', function () {
-            showNearbyAvailable(this);
-        });
-    }
 });
 
-// Event delegation for dynamic popup buttons
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('directions-btn')) {
-        const lat = e.target.getAttribute('data-lat');
-        const lng = e.target.getAttribute('data-lng');
-        getDirections(lat, lng);
-    }
-
-    if (e.target.classList.contains('btn-avail')) {
-        const stationId = parseInt(e.target.getAttribute('data-station-id'));
-        reportAvailability(stationId, 'available', e.target);
-    }
-
-    if (e.target.classList.contains('btn-unavail')) {
-        const stationId = parseInt(e.target.getAttribute('data-station-id'));
-        reportAvailability(stationId, 'unavailable', e.target);
-    }
-
-    if (e.target.classList.contains('submit-review-btn')) {
-        const stationId = parseInt(e.target.getAttribute('data-station-id'));
-        submitReview(stationId, e.target);
-    }
-
-    if (e.target.classList.contains('close-popup')) {
-        closeStationPopup();
-    }
-});
+// Helper for directions (called by onclick)
+window.getDirections = getDirections;
+window.reportAvailability = reportAvailability;
+window.submitReview = submitReview;
+window.closeStationPopup = closeStationPopup;
+window.logout = logout;
+window.searchStations = searchStations;
+window.showNearbyAvailable = showNearbyAvailable;

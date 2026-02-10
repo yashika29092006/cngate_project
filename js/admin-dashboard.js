@@ -202,11 +202,17 @@ function closeModal() {
 }
 
 
-function logout() {
+function logout(btn) {
+    if (btn) btn.classList.add('btn-loading');
     sessionStorage.removeItem('currentAdmin');
     sessionStorage.removeItem('token');
-    window.location.href = '../../index.html';
+    setTimeout(() => {
+        window.location.href = '../index.html';
+    }, 500);
 }
+
+window.logout = logout;
+
 
 
 document.getElementById('edit-modal').addEventListener('click', function (e) {

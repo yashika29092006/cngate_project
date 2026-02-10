@@ -238,11 +238,17 @@ function getAuthHeaders() {
     };
 }
 
-function logout() {
+function logout(btn) {
+    if (btn) btn.classList.add('btn-loading');
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('currentAdmin');
-    window.location.href = 'admin-login.html';
+    setTimeout(() => {
+        window.location.href = 'admin-login.html';
+    }, 500);
 }
+
+window.logout = logout;
+
 
 function showToast(msg, type) {
     // Simple alert for now, but UI-wise we could do better

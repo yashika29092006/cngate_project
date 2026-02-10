@@ -63,9 +63,4 @@ function getCurrentLocation(btn) {
     );
 }
 
-const locationBtn = document.querySelector('.location-btn');
-if (locationBtn) {
-    locationBtn.addEventListener('click', function () {
-        getCurrentLocation(this);
-    });
-}
+window.getCurrentLocation = getCurrentLocation;
