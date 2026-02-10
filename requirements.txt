@@ -17,7 +17,6 @@ Jinja2==3.1.6
 MarkupSafe==3.0.3
 myenv==201902.7
 passlib==1.7.4
-psycopg2==2.9.11
 psycopg2-binary==2.9.11
 pyasn1==0.6.1
 pycparser==2.23
