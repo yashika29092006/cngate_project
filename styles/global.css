@@ -1,0 +1,65 @@
+/* Global Styles */
+:root {
+    --primary-color: #0a4a19;
+    --primary-hover: #052e16;
+}
+
+/* Button Loading State */
+.btn-loading {
+    position: relative !important;
+    color: transparent !important;
+    pointer-events: none !important;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: btn-spin 0.6s linear infinite;
+    z-index: 2;
+}
+
+/* For buttons with dark background, the loader is white. 
+   If we have light background buttons, we might need a dark loader. */
+.btn-loading.btn-light::after {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--primary-color);
+}
+
+@keyframes btn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Utility to add transition to buttons */
+button,
+.btn,
+.submit-btn,
+.login-btn,
+.location-btn,
+.action-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+button:active,
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* Glassmorphism utility for buttons if needed */
+.btn-glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}

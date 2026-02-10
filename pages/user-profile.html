@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - CNGate</title>
+    <link rel="stylesheet" href="../styles/global.css">
     <link rel="stylesheet" href="../styles/user-profile.css">
 </head>
 
@@ -49,44 +50,7 @@
         </div>
     </div>
 
-    <script>
-        async function loadProfile() {
-            const token = sessionStorage.getItem('token');
-            if (!token) {
-                window.location.href = 'user-login.html';
-                return;
-            }
-            try {
-                const res = await fetch('/api/user/profile', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    const user = await res.json();
-
-                    // Populate fields
-                    document.getElementById('p-name').textContent = user.name || 'N/A';
-                    document.getElementById('p-email').textContent = user.email || 'N/A';
-                    document.getElementById('p-phone').textContent = user.phone || 'N/A';
-                    document.getElementById('p-vehicle').textContent = user.vehicle || 'N/A';
-
-                    // Initials
-                    const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-                    document.getElementById('avatarInitials').textContent = initial;
-
-                    // Show content
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('profileContent').style.display = 'block';
-                } else {
-                    alert("Failed to load profile. Please login again.");
-                    window.location.href = 'user-login.html';
-                }
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loading').textContent = 'Error loading profile.';
-            }
-        }
-        loadProfile();
-    </script>
+    <script src="../js/user-profile.js"></script>
 </body>
 
 </html>

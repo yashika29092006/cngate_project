@@ -70,12 +70,12 @@ function showStationDetails(stationId) {
         <p><strong>Last Updated:</strong> ${new Date(station.last_updated).toLocaleString()}</p>
         
         <div class="popup-actions">
-            <button onclick="getDirections(${station.lat}, ${station.lng})" class="directions-btn">Get Directions</button>
+            <button class="directions-btn" data-lat="${station.lat}" data-lng="${station.lng}">Get Directions</button>
             <div class="user-actions">
                 <h4>Report Status</h4>
                 <div class="report-buttons">
-                     <button onclick="reportAvailability(${station.id}, 'available')" class="btn-avail">Available</button>
-                     <button onclick="reportAvailability(${station.id}, 'unavailable')" class="btn-unavail">Unavailable</button>
+                     <button class="btn-avail" data-station-id="${station.id}" data-type="available">Available</button>
+                     <button class="btn-unavail" data-station-id="${station.id}" data-type="unavailable">Unavailable</button>
                 </div>
             </div>
             <div class="reviews-section">
@@ -90,7 +90,7 @@ function showStationDetails(stationId) {
                         <option value="1">1 ⭐</option>
                     </select>
                     <textarea id="reviewComment" placeholder="Write a review..."></textarea>
-                    <button onclick="submitReview(${station.id})">Post Review</button>
+                    <button class="submit-review-btn" data-station-id="${station.id}">Post Review</button>
                 </div>
             </div>
         </div>
@@ -191,7 +191,7 @@ async function fetchReviews(stationId) {
     }
 }
 
-async function submitReview(stationId) {
+async function submitReview(stationId, btn) {
     const rating = document.getElementById('reviewRating').value;
     const comment = document.getElementById('reviewComment').value;
     const token = sessionStorage.getItem('token');
@@ -201,6 +201,8 @@ async function submitReview(stationId) {
         window.location.href = 'user-login.html';
         return;
     }
+
+    if (btn) btn.classList.add('btn-loading');
 
     try {
         const res = await fetch(`/api/reviews/`, {
@@ -222,15 +224,19 @@ async function submitReview(stationId) {
     } catch (err) {
         console.error(err);
         alert("Error submitting review");
+    } finally {
+        if (btn) btn.classList.remove('btn-loading');
     }
 }
 
-async function reportAvailability(stationId, availability) {
+async function reportAvailability(stationId, availability, btn) {
     const token = sessionStorage.getItem('token');
     if (!token) {
         alert("Please login to report availability");
         return;
     }
+
+    if (btn) btn.classList.add('btn-loading');
 
     try {
         const res = await fetch(`/api/stations/${stationId}/report-availability`, {
@@ -251,24 +257,28 @@ async function reportAvailability(stationId, availability) {
     } catch (err) {
         console.error(err);
         alert("Error reporting availability");
+    } finally {
+        if (btn) btn.classList.remove('btn-loading');
     }
 }
 
 
 
-function showNearbyAvailable() {
+function showNearbyAvailable(btn) {
     if (!navigator.geolocation) {
         alert('Geolocation is not supported by your browser');
         return;
     }
 
-    // Show loading state if needed, but alert is instant
+    if (btn) btn.classList.add('btn-loading');
+
     navigator.geolocation.getCurrentPosition(position => {
         const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
 
         if (userLat === null || userLng === null || userLat === undefined || userLng === undefined) {
             alert('Unable to determine accurate coordinates.');
+            if (btn) btn.classList.remove('btn-loading');
             return;
         }
 
@@ -291,9 +301,11 @@ function showNearbyAvailable() {
         document.getElementById('availabilityFilter').value = 'available';
 
         searchStations();
+        if (btn) btn.classList.remove('btn-loading');
     }, (err) => {
         console.error(err);
         alert('Unable to retrieve your location. Please check browser permissions.');
+        if (btn) btn.classList.remove('btn-loading');
     });
 }
 
@@ -311,6 +323,58 @@ window.addEventListener('load', async function () {
     // Check if we should show nearby stations automatically
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('nearby') === 'true') {
-        setTimeout(showNearbyAvailable, 500);
+        const nearbyBtn = document.querySelector('.action-btn');
+        setTimeout(() => showNearbyAvailable(nearbyBtn), 500);
+    }
+
+    // Search listeners
+    const searchInput = document.getElementById('searchStation');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', searchStations);
+    }
+
+    const availabilityFilter = document.getElementById('availabilityFilter');
+    if (availabilityFilter) {
+        availabilityFilter.addEventListener('change', searchStations);
+    }
+
+    const crowdFilter = document.getElementById('crowdFilter');
+    if (crowdFilter) {
+        crowdFilter.addEventListener('change', searchStations);
+    }
+
+    const nearbyBtn = document.querySelector('.action-btn');
+    if (nearbyBtn) {
+        nearbyBtn.addEventListener('click', function () {
+            showNearbyAvailable(this);
+        });
+    }
+});
+
+// Event delegation for dynamic popup buttons
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('directions-btn')) {
+        const lat = e.target.getAttribute('data-lat');
+        const lng = e.target.getAttribute('data-lng');
+        getDirections(lat, lng);
+    }
+
+    if (e.target.classList.contains('btn-avail')) {
+        const stationId = parseInt(e.target.getAttribute('data-station-id'));
+        reportAvailability(stationId, 'available', e.target);
+    }
+
+    if (e.target.classList.contains('btn-unavail')) {
+        const stationId = parseInt(e.target.getAttribute('data-station-id'));
+        reportAvailability(stationId, 'unavailable', e.target);
+    }
+
+    if (e.target.classList.contains('submit-review-btn')) {
+        const stationId = parseInt(e.target.getAttribute('data-station-id'));
+        submitReview(stationId, e.target);
+    }
+
+    if (e.target.classList.contains('close-popup')) {
+        closeStationPopup();
     }
 });

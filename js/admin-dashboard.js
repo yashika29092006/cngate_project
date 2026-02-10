@@ -105,17 +105,15 @@ async function renderAdminDashboard() {
 
         const delBtn = document.getElementById('delete-station-btn');
         if (delBtn) {
-            delBtn.addEventListener('click', async () => {
+            delBtn.addEventListener('click', async function () {
                 const ok = confirm('Delete this station permanently? This cannot be undone.');
                 if (!ok) return;
 
-                // show spinner while deleting
-                const spinner = document.getElementById('dashboard-spinner');
-                if (spinner) { spinner.style.display = 'block'; spinner.setAttribute('aria-hidden', 'false'); }
+                const btn = this;
+                btn.classList.add('btn-loading');
 
                 try {
                     const token = sessionStorage.getItem('token');
-                    // Direct fetch to ensure no dependency issues
                     const res = await fetch(`/api/stations/${adminStation.id}`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -134,7 +132,7 @@ async function renderAdminDashboard() {
                     console.error(e);
                     alert('Failed to delete station (Network/Client Error)');
                 } finally {
-                    if (spinner) { spinner.style.display = 'none'; spinner.setAttribute('aria-hidden', 'true'); }
+                    btn.classList.remove('btn-loading');
                 }
             });
         }
@@ -168,6 +166,7 @@ function editStation(id) {
 document.getElementById('updateStationForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
+    const submitBtn = document.getElementById('update-details-btn');
     const id = parseInt(document.getElementById('edit-station-id').value);
 
     if (currentAdmin.stationId !== id) {
@@ -184,11 +183,16 @@ document.getElementById('updateStationForm').addEventListener('submit', async fu
         timing: document.getElementById('edit-timing').value
     };
 
+    if (submitBtn) submitBtn.classList.add('btn-loading');
 
-    if (await updateStation(id, updates)) {
-        renderAdminDashboard();
-        closeModal();
-        alert('Station details updated successfully!');
+    try {
+        if (await updateStation(id, updates)) {
+            renderAdminDashboard();
+            closeModal();
+            alert('Station details updated successfully!');
+        }
+    } finally {
+        if (submitBtn) submitBtn.classList.remove('btn-loading');
     }
 });
 
@@ -236,8 +240,8 @@ async function fetchRequests() {
                             <div style="font-size: 0.8rem; color: #666;">${new Date(r.timestamp).toLocaleString()}</div>
                         </div>
                         <div class="req-actions">
-                            <button onclick="resolveRequest(${r.id}, 'approve')" style="background: #27ae60; color: white; border: none; padding: 0.5rem; border-radius: 4px; margin-right: 0.5rem; cursor: pointer;">Approve</button>
-                            <button onclick="resolveRequest(${r.id}, 'reject')" style="background: #c0392b; color: white; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer;">Reject</button>
+                            <button onclick="resolveRequest(${r.id}, 'approve', this)" style="background: #27ae60; color: white; border: none; padding: 0.5rem; border-radius: 4px; margin-right: 0.5rem; cursor: pointer;">Approve</button>
+                            <button onclick="resolveRequest(${r.id}, 'reject', this)" style="background: #c0392b; color: white; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer;">Reject</button>
                         </div>
                     </div>
                 `).join('');
@@ -248,7 +252,8 @@ async function fetchRequests() {
     } catch (e) { console.error(e); }
 }
 
-async function resolveRequest(reqId, action) {
+async function resolveRequest(reqId, action, btn) {
+    if (btn) btn.classList.add('btn-loading');
     try {
         const token = sessionStorage.getItem('token');
         const res = await fetch(`/api/stations/requests/${reqId}/resolve`, {
@@ -269,7 +274,11 @@ async function resolveRequest(reqId, action) {
         } else {
             alert('Failed to resolve request');
         }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+    } finally {
+        if (btn) btn.classList.remove('btn-loading');
+    }
 }
 window.resolveRequest = resolveRequest;
 

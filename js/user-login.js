@@ -3,6 +3,9 @@ if (form) {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.classList.add('btn-loading');
+
         const loginData = {
             email: document.getElementById('user-email').value,
             password: document.getElementById('user-password').value
@@ -28,6 +31,9 @@ if (form) {
             .catch(err => {
                 console.error(err);
                 alert('Login failed. Check credentials and try again.');
+            })
+            .finally(() => {
+                if (submitBtn) submitBtn.classList.remove('btn-loading');
             });
     });
 }

@@ -1,6 +1,14 @@
 const API_URL = '/api';
 
 async function checkAuthAndLoad() {
+    // Set current date
+    const dateEl = document.getElementById('current-date');
+    if (dateEl) {
+        dateEl.innerText = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    }
+
     const token = sessionStorage.getItem('token');
     if (!token) {
         window.location.href = 'admin-login.html';
@@ -64,8 +72,8 @@ async function loadPendingStations() {
                     <div class="detail-item">📞 <span>${station.phone}</span></div>
                 </div>
                 <div class="action-row">
-                    <button class="btn btn-approve" onclick="approveStation(${station.id})">Approve</button>
-                    <button class="btn btn-reject" onclick="rejectStation(${station.id})">Reject</button>
+                    <button class="btn btn-approve" onclick="approveStation(${station.id}, this)">Approve</button>
+                    <button class="btn btn-reject" onclick="rejectStation(${station.id}, this)">Reject</button>
                 </div>
             </div>
         `).join('');
@@ -102,7 +110,7 @@ async function loadContactRequests() {
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
                         <span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(contact.created_at).toLocaleString()}</span>
-                        <button class="btn btn-reject" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="deleteContact(${contact.id})">Delete</button>
+                        <button class="btn btn-reject" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="deleteContact(${contact.id}, this)">Delete</button>
                     </div>
                 </div>
                 <div class="msg-content">
@@ -112,7 +120,7 @@ async function loadContactRequests() {
                 <div class="response-section" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
                     <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">ADMIN RESPONSE</label>
                     <textarea id="response-text-${contact.id}" placeholder="Type your response here..." style="width: 100%; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; font-family: inherit; font-size: 0.9rem; margin-bottom: 0.75rem;">${contact.admin_response || ''}</textarea>
-                    <button class="btn btn-approve" style="width: auto; padding: 0.5rem 1.5rem;" onclick="respondToContact(${contact.id})">
+                    <button class="btn btn-approve" style="width: auto; padding: 0.5rem 1.5rem;" onclick="respondToContact(${contact.id}, this)">
                         ${contact.admin_response ? 'Update Response' : 'Post to Contact Page'}
                     </button>
                 </div>
@@ -124,9 +132,10 @@ async function loadContactRequests() {
     }
 }
 
-async function approveStation(id) {
+async function approveStation(id, btn) {
     if (!confirm('Are you sure you want to approve this station?')) return;
 
+    if (btn) btn.classList.add('btn-loading');
     try {
         const response = await fetch(`${API_URL}/super-admin/stations/${id}/approve`, {
             method: 'POST',
@@ -142,12 +151,15 @@ async function approveStation(id) {
         }
     } catch (error) {
         console.error(error);
+    } finally {
+        if (btn) btn.classList.remove('btn-loading');
     }
 }
 
-async function rejectStation(id) {
+async function rejectStation(id, btn) {
     if (!confirm('Reject and delete this station request permanently?')) return;
 
+    if (btn) btn.classList.add('btn-loading');
     try {
         const response = await fetch(`${API_URL}/super-admin/stations/${id}/reject`, {
             method: 'POST',
@@ -162,16 +174,19 @@ async function rejectStation(id) {
         }
     } catch (error) {
         console.error(error);
+    } finally {
+        if (btn) btn.classList.remove('btn-loading');
     }
 }
 
-async function respondToContact(id) {
+async function respondToContact(id, btn) {
     const responseText = document.getElementById(`response-text-${id}`).value;
     if (!responseText.trim()) {
         showToast('Please enter a response', 'error');
         return;
     }
 
+    if (btn) btn.classList.add('btn-loading');
     try {
         const response = await fetch(`${API_URL}/super-admin/contacts/${id}/respond`, {
             method: 'POST',
@@ -187,12 +202,15 @@ async function respondToContact(id) {
         }
     } catch (error) {
         console.error(error);
+    } finally {
+        if (btn) btn.classList.remove('btn-loading');
     }
 }
 
-async function deleteContact(id) {
+async function deleteContact(id, btn) {
     if (!confirm('Delete this message permanently?')) return;
 
+    if (btn) btn.classList.add('btn-loading');
     try {
         const response = await fetch(`${API_URL}/super-admin/contacts/${id}`, {
             method: 'DELETE',
@@ -207,6 +225,8 @@ async function deleteContact(id) {
         }
     } catch (error) {
         console.error(error);
+    } finally {
+        if (btn) btn.classList.remove('btn-loading');
     }
 }
 

@@ -3,6 +3,9 @@ if (form) {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.classList.add('btn-loading');
+
         const user = {
             name: document.getElementById('user-signup-name').value,
             email: document.getElementById('user-signup-email').value,
@@ -16,18 +19,21 @@ if (form) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
         })
-        .then(async res => {
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.detail || 'Signup failed');
-            return data;
-        })
-        .then(data => {
-            alert(data.message);
-            window.location.href = 'user-login.html';
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Signup failed. ' + (err.message || 'Try again'));
-        });
+            .then(async res => {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || 'Signup failed');
+                return data;
+            })
+            .then(data => {
+                alert(data.message);
+                window.location.href = 'user-login.html';
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Signup failed. ' + (err.message || 'Try again'));
+            })
+            .finally(() => {
+                if (submitBtn) submitBtn.classList.remove('btn-loading');
+            });
     });
 }
