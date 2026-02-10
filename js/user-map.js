@@ -70,12 +70,12 @@ function showStationDetails(stationId) {
         <p><strong>Last Updated:</strong> ${new Date(station.last_updated).toLocaleString()}</p>
         
         <div class="popup-actions">
-            <button class="directions-btn" data-lat="${station.lat}" data-lng="${station.lng}">Get Directions</button>
+            <button onclick="getDirections(${station.lat}, ${station.lng})" class="directions-btn">Get Directions</button>
             <div class="user-actions">
                 <h4>Report Status</h4>
                 <div class="report-buttons">
-                     <button class="btn-avail" data-station-id="${station.id}" data-type="available">Available</button>
-                     <button class="btn-unavail" data-station-id="${station.id}" data-type="unavailable">Unavailable</button>
+                     <button onclick="reportAvailability(${station.id}, 'available', this)" class="btn-avail">Available</button>
+                     <button onclick="reportAvailability(${station.id}, 'unavailable', this)" class="btn-unavail">Unavailable</button>
                 </div>
             </div>
             <div class="reviews-section">
@@ -90,7 +90,7 @@ function showStationDetails(stationId) {
                         <option value="1">1 ⭐</option>
                     </select>
                     <textarea id="reviewComment" placeholder="Write a review..."></textarea>
-                    <button class="submit-review-btn" data-station-id="${station.id}">Post Review</button>
+                    <button onclick="submitReview(${station.id}, this)" class="submit-review-btn">Post Review</button>
                 </div>
             </div>
         </div>
@@ -309,11 +309,15 @@ function showNearbyAvailable(btn) {
     });
 }
 
-function logout() {
+function logout(btn) {
+    if (btn) btn.classList.add('btn-loading');
     sessionStorage.removeItem('currentUser');
     sessionStorage.removeItem('token');
-    window.location.href = '../../index.html';
+    setTimeout(() => {
+        window.location.href = '../index.html';
+    }, 500);
 }
+
 
 // Initialize
 window.addEventListener('load', async function () {

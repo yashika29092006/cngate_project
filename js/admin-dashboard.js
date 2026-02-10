@@ -200,6 +200,7 @@ document.getElementById('updateStationForm').addEventListener('submit', async fu
 function closeModal() {
     document.getElementById('edit-modal').classList.remove('active');
 }
+window.closeModal = closeModal;
 
 
 function logout(btn) {

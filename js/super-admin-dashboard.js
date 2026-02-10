@@ -246,9 +246,11 @@ function logout(btn) {
         window.location.href = 'admin-login.html';
     }, 500);
 }
-
 window.logout = logout;
-
+window.approveStation = approveStation;
+window.rejectStation = rejectStation;
+window.deleteContact = deleteContact;
+window.respondToContact = respondToContact;
 
 function showToast(msg, type) {
     // Simple alert for now, but UI-wise we could do better
