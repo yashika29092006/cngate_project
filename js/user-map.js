@@ -5,19 +5,19 @@ let userLocationMarker = null;
 
 function initMap() {
     // Default center (can be adjusted)
-    map = L.map('map').setView([13.0827, 80.2707], 12); // Chennai coordinates as default
+    map = L.map('map').seView([13.0827, 80.2707], 12); // Chennai coordinates as default
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    addStationMarkers();
+    // addStationMarkers();
 }
 
 function addStationMarkers() {
     const stations = getStations();
 
-    // Clear existing markers
+    // Clear old markers
     markers.forEach(marker => map.removeLayer(marker));
     markers = [];
 
@@ -37,7 +37,7 @@ function addStationMarkers() {
             iconSize: [40, 40],
             iconAnchor: [20, 20]
         });
-
+        //Create Marker at the location
         const marker = L.marker([station.lat, station.lng], { icon: icon })
             .addTo(map)
             .bindPopup(`<b>${station.name}</b><br>${station.area}`)//shows pop when user clicked marker
@@ -165,7 +165,7 @@ function searchStations() {
     }
 }
 
-// --- Interaction Functions ---
+// review session
 
 async function fetchReviews(stationId) {
     try {
