@@ -323,6 +323,7 @@ function showNearbyAvailable(btn) {
 function logout(btn) {
     if (btn) btn.classList.add('btn-loading');
     sessionStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentAdmin');
     sessionStorage.removeItem('token');
     setTimeout(() => {
         window.location.href = '../index.html';

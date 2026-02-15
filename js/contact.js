@@ -98,6 +98,7 @@ if (contactForm) {
 
             if (response.ok) {
                 alert('Message sent successfully! We will get back to you shortly.');
+                // Refresh responses grid or clear form
                 e.target.reset();
             } else {
                 alert('Failed to send message.');

@@ -104,9 +104,9 @@ async function loadContactRequests() {
         container.innerHTML = contacts.map(contact => {
             let emailDisplay = contact.email;
             if (contact.role === 'user') {
-                emailDisplay = `user:${contact.email}`;
+                emailDisplay = `user : ${contact.email}`;
             } else if (contact.role === 'admin') {
-                emailDisplay = `admin:${contact.email}${contact.station_name ? ` (${contact.station_name})` : ''}`;
+                emailDisplay = `admin : ${contact.email}${contact.station_name ? ` ( ${contact.station_name} )` : ''}`;
             }
 
             return `
