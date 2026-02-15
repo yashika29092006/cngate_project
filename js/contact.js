@@ -101,7 +101,8 @@ if (contactForm) {
                 // Refresh responses grid or clear form
                 e.target.reset();
             } else {
-                alert('Failed to send message.');
+                const errorData = await response.json().catch(() => ({}));
+                alert(`Failed to send message: ${errorData.detail || response.statusText || 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Error:', error);
