@@ -1,3 +1,4 @@
+console.log('contact.js v3 loaded');
 // Header scroll effect
 window.addEventListener('scroll', () => {
     const header = document.getElementById('header');
@@ -87,13 +88,16 @@ if (contactForm) {
             role = 'user';
         }
 
+        const payload = { name, email, phone, message, role, station_name };
+        console.log('Sending payload:', payload);
+
         try {
             const response = await fetch('/api/contact/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name, email, phone, message, role, station_name })
+                body: JSON.stringify(payload)
             });
 
             if (response.ok) {
@@ -102,7 +106,20 @@ if (contactForm) {
                 e.target.reset();
             } else {
                 const errorData = await response.json().catch(() => ({}));
-                alert(`Failed to send message: ${errorData.detail || response.statusText || 'Unknown error'}`);
+                console.error('Submission failed:', errorData);
+
+                let errorMessage = 'Unknown error';
+                if (typeof errorData.detail === 'string') {
+                    errorMessage = errorData.detail;
+                } else if (Array.isArray(errorData.detail)) {
+                    errorMessage = errorData.detail.map(err => `${err.loc.join('.')}: ${err.msg}`).join('\n');
+                } else if (errorData.detail) {
+                    errorMessage = JSON.stringify(errorData.detail);
+                } else if (response.statusText) {
+                    errorMessage = response.statusText;
+                }
+
+                alert(`Failed to send message (Status ${response.status}):\n${errorMessage}`);
             }
         } catch (error) {
             console.error('Error:', error);
