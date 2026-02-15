@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.db import SessionLocal
 from app.models.contact import ContactRequest
+from typing import Optional
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/contact", tags=["Contact"])
@@ -11,8 +12,8 @@ class ContactSchema(BaseModel):
     email: str
     phone: str = ""
     message: str
-    role: str = None
-    station_name: str = None
+    role: Optional[str] = None
+    station_name: Optional[str] = None
 
 def get_db():
     db = SessionLocal()

@@ -88,7 +88,14 @@ if (contactForm) {
             role = 'user';
         }
 
-        const payload = { name, email, phone, message, role, station_name };
+        const payload = {
+            name,
+            email,
+            phone,
+            message,
+            role: role || "",
+            station_name: station_name || ""
+        };
         console.log('Sending payload:', payload);
 
         try {
