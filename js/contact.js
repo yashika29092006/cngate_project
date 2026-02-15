@@ -43,7 +43,21 @@ async function loadPublicResponses() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadPublicResponses);
+// Auto-fill form if logged in
+document.addEventListener('DOMContentLoaded', () => {
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    const currentAdmin = JSON.parse(sessionStorage.getItem('currentAdmin'));
+
+    if (currentAdmin) {
+        if (document.getElementById('name')) document.getElementById('name').value = currentAdmin.stationName || '';
+        if (document.getElementById('email')) document.getElementById('email').value = currentAdmin.email || '';
+    } else if (currentUser) {
+        if (document.getElementById('name')) document.getElementById('name').value = currentUser.name || '';
+        if (document.getElementById('email')) document.getElementById('email').value = currentUser.email || '';
+    }
+
+    loadPublicResponses();
+});
 
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
@@ -65,10 +79,11 @@ if (contactForm) {
         let role = null;
         let station_name = null;
 
-        if (currentAdmin) {
+        // Only attach role if the email matches the logged-in account
+        if (currentAdmin && currentAdmin.email === email) {
             role = 'admin';
             station_name = currentAdmin.stationName;
-        } else if (currentUser) {
+        } else if (currentUser && currentUser.email === email) {
             role = 'user';
         }
 
