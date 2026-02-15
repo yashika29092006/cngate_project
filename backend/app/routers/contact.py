@@ -4,7 +4,7 @@ from app.database.db import SessionLocal
 from app.models.contact import ContactRequest
 from pydantic import BaseModel
 
-router = APIRouter(prefix="/api/contact", tags=["Contact"])
+router = APIRouter(prefix="/contact", tags=["Contact"])
 
 class ContactSchema(BaseModel):
     name: str

@@ -5,7 +5,7 @@ from app.models.station import Station
 from app.models.contact import ContactRequest
 from app.auth import get_current_admin
 
-router = APIRouter(prefix="/api/super-admin", tags=["Super Admin"])
+router = APIRouter(prefix="/super-admin", tags=["Super Admin"])
 
 SUPER_ADMIN_EMAIL = "superadmin@cngate.com"
 
