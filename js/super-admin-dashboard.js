@@ -101,12 +101,20 @@ async function loadContactRequests() {
             return;
         }
 
-        container.innerHTML = contacts.map(contact => `
+        container.innerHTML = contacts.map(contact => {
+            let emailDisplay = contact.email;
+            if (contact.role === 'user') {
+                emailDisplay = `user:${contact.email}`;
+            } else if (contact.role === 'admin') {
+                emailDisplay = `admin:${contact.email}${contact.station_name ? ` (${contact.station_name})` : ''}`;
+            }
+
+            return `
             <div class="request-item">
                 <div class="request-top">
                     <div class="user-info">
                         <h4>${contact.name}</h4>
-                        <p>${contact.email} • 📞 ${contact.phone || 'N/A'}</p>
+                        <p>${emailDisplay} • 📞 ${contact.phone || 'N/A'}</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
                         <span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(contact.created_at).toLocaleString()}</span>
@@ -125,7 +133,8 @@ async function loadContactRequests() {
                     </button>
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
     } catch (error) {
         container.innerHTML = '<div class="empty-state">Error loading contacts.</div>';

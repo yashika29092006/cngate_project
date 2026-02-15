@@ -11,6 +11,8 @@ class ContactSchema(BaseModel):
     email: str
     phone: str = ""
     message: str
+    role: str = None
+    station_name: str = None
 
 def get_db():
     db = SessionLocal()

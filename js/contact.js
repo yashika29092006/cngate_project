@@ -58,13 +58,27 @@ if (contactForm) {
         const phone = document.getElementById('phone').value;
         const message = document.getElementById('message').value;
 
+        // Get user/admin info from sessionStorage
+        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+        const currentAdmin = JSON.parse(sessionStorage.getItem('currentAdmin'));
+
+        let role = null;
+        let station_name = null;
+
+        if (currentAdmin) {
+            role = 'admin';
+            station_name = currentAdmin.stationName;
+        } else if (currentUser) {
+            role = 'user';
+        }
+
         try {
             const response = await fetch('/api/contact/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name, email, phone, message })
+                body: JSON.stringify({ name, email, phone, message, role, station_name })
             });
 
             if (response.ok) {

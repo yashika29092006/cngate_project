@@ -10,6 +10,8 @@ class ContactRequest(Base):
     email = Column(String)
     phone = Column(String)
     message = Column(String)
+    role = Column(String, nullable=True)
+    station_name = Column(String, nullable=True)
     admin_response = Column(String, nullable=True)
     responded_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=func.now())
