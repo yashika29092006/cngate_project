@@ -44,7 +44,39 @@ body {
     animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dashboard-header h1 {
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.header-left .logo {
+    text-decoration: none;
+    color: var(--primary);
+    font-size: 1.5rem;
+    font-weight: 800;
+    padding-right: 1.5rem;
+    border-right: 2px solid var(--border);
+}
+
+.header-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.header-nav a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.header-nav a:hover {
+    color: var(--primary);
+}
+
+.header-left h1 {
     font-size: 2.2rem;
     font-weight: 700;
     color: var(--primary);
