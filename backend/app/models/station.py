@@ -19,6 +19,7 @@ class Station(Base):
     timing = Column(String)
     email = Column(String, unique=True)
     password = Column(String)
+    amenities = Column(String, default="") # Comma separated list
     status = Column(String, default="pending") # pending, approved
     last_updated = Column(DateTime, default=func.now(), onupdate=func.now())
 

@@ -6,6 +6,10 @@ if (form) {
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.classList.add('btn-loading');
 
+        const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenity"]:checked'))
+            .map(cb => cb.value)
+            .join(', ');
+
         const admin = {
             name: document.getElementById('admin-signup-name').value,
             area: document.getElementById('admin-signup-area').value,
@@ -14,7 +18,8 @@ if (form) {
             lat: parseFloat(document.getElementById('admin-signup-latitude').value),
             lng: parseFloat(document.getElementById('admin-signup-longitude').value),
             email: document.getElementById('admin-signup-email').value,
-            password: document.getElementById('admin-signup-password').value
+            password: document.getElementById('admin-signup-password').value,
+            amenities: selectedAmenities
         };
 
         fetch('/api/admin/signup', {

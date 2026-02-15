@@ -563,3 +563,22 @@ body {
         padding: 1.5rem;
     }
 }
+
+/* Amenities Styling */
+.amenity-item {
+    display: inline-flex;
+    align-items: center;
+    background: #f0f7f4;
+    color: #1b4332;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid #d8e9e1;
+    transition: all 0.2s ease;
+}
+
+.amenity-item:hover {
+    background: #d8e9e1;
+    transform: translateY(-1px);
+}

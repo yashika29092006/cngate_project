@@ -42,6 +42,16 @@ async function renderAdminDashboard() {
             ${quantityDisplay}
             <p class="station-info"><strong> Timing:</strong> ${adminStation.timing}</p>
             <p class="station-info"><strong>Email:</strong> ${adminStation.email}</p>
+            <div class="station-info" style="margin-top: 10px;">
+                <strong>Amenities:</strong>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px;">
+                    ${adminStation.amenities ? adminStation.amenities.split(',').map(a => `
+                        <span style="background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; border: 1px solid #c7d2fe;">
+                            ${a.trim()}
+                        </span>
+                    `).join('') : '<span style="color: #666; font-style: italic; font-size: 0.8rem;">None set</span>'}
+                </div>
+            </div>
             <div style="margin-top: 0.8rem;">
                 <span class="status-badge ${adminStation.availability}">
                     ${adminStation.availability === 'available' ? '✓ Available' : '✗ Not Available'}
@@ -158,6 +168,16 @@ function editStation(id) {
     document.getElementById('edit-price').value = station.price;
     document.getElementById('edit-timing').value = station.timing;
 
+    // Reset and set checkboxes
+    const checkboxes = document.querySelectorAll('input[name="edit-amenity"]');
+    checkboxes.forEach(cb => cb.checked = false);
+
+    if (station.amenities) {
+        const amenityList = station.amenities.split(',').map(a => a.trim());
+        checkboxes.forEach(cb => {
+            if (amenityList.includes(cb.value)) cb.checked = true;
+        });
+    }
 
     document.getElementById('edit-modal').classList.add('active');
 }
@@ -180,7 +200,10 @@ document.getElementById('updateStationForm').addEventListener('submit', async fu
         quantity: parseInt(document.getElementById('edit-quantity').value),
         crowd: document.getElementById('edit-crowd').value,
         price: parseFloat(document.getElementById('edit-price').value),
-        timing: document.getElementById('edit-timing').value
+        timing: document.getElementById('edit-timing').value,
+        amenities: Array.from(document.querySelectorAll('input[name="edit-amenity"]:checked'))
+            .map(cb => cb.value)
+            .join(', ')
     };
 
     if (submitBtn) submitBtn.classList.add('btn-loading');

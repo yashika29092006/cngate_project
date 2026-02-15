@@ -9,6 +9,7 @@ class AdminSignup(BaseModel):
     lng: float
     email: str
     password: str
+    amenities: str = ""
 
 
 class AdminLogin(BaseModel):

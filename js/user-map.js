@@ -76,8 +76,21 @@ function showStationDetails(stationId) {
         <p><strong>Price:</strong> ₹${station.price}/kg</p>
         <p><strong>Timing:</strong> ${station.timing}</p>
         <p><strong>Last Updated:</strong> ${new Date(station.last_updated).toLocaleString()}</p>
+
+        ${station.amenities ? `
+        <div class="amenities-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+            <p><strong>Available Amenities:</strong></p>
+            <div class="amenities-list" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                ${station.amenities.split(',').map(item => `
+                    <span class="amenity-item" style="background: #f0f7f4; color: #1b4332; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; border: 1px solid #d8e9e1;">
+                        ${item.trim()}
+                    </span>
+                `).join('')}
+            </div>
+        </div>
+        ` : ''}
         
-        <div class="popup-actions">
+        <div class="popup-actions" style="margin-top: 20px;">
             <button onclick="getDirections(${station.lat}, ${station.lng})" class="directions-btn">Get Directions</button>
             <div class="user-actions">
                 <h4>Report Status</h4>
