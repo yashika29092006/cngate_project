@@ -4,14 +4,19 @@ let markers = [];
 let userLocationMarker = null;
 
 function initMap() {
+    if (map) return;
+
     // Default center (can be adjusted)
-    map = L.map('map').seView([13.0827, 80.2707], 12); // Chennai coordinates as default
+    map = L.map('map').setView([13.0827, 80.2707], 12); // Chennai coordinates as default
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // addStationMarkers();
+    // Force map to recognize container size
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
 }
 
 function addStationMarkers() {
@@ -22,9 +27,12 @@ function addStationMarkers() {
     markers = [];
 
     stations.forEach(station => {
+        const lat = parseFloat(station.lat);
+        const lng = parseFloat(station.lng);
+
         // Check for valid coordinates
-        if (station.lat === null || station.lng === null || station.lat === undefined || station.lng === undefined) {
-            console.warn(`Station ${station.id} (${station.name}) has missing coordinates. Skipping.`);
+        if (isNaN(lat) || isNaN(lng)) {
+            console.warn(`Station ${station.id} (${station.name}) has missing or invalid coordinates. Skipping.`);
             return;
         }
 
@@ -38,7 +46,7 @@ function addStationMarkers() {
             iconAnchor: [20, 20]
         });
         //Create Marker at the location
-        const marker = L.marker([station.lat, station.lng], { icon: icon })
+        const marker = L.marker([lat, lng], { icon: icon })
             .addTo(map)
             .bindPopup(`<b>${station.name}</b><br>${station.area}`)//shows pop when user clicked marker
             .on('click', () => showStationDetails(station.id));
@@ -137,9 +145,12 @@ function searchStations() {
     markers = [];
 
     filteredStations.forEach(station => {
+        const lat = parseFloat(station.lat);
+        const lng = parseFloat(station.lng);
+
         // Check for valid coordinates
-        if (station.lat === null || station.lng === null || station.lat === undefined || station.lng === undefined) {
-            console.warn(`Station ${station.id} (${station.name}) has missing coordinates. Skipping.`);
+        if (isNaN(lat) || isNaN(lng)) {
+            console.warn(`Station ${station.id} (${station.name}) has missing or invalid coordinates. Skipping.`);
             return;
         }
 
@@ -151,7 +162,7 @@ function searchStations() {
             iconAnchor: [20, 20]
         });
 
-        const marker = L.marker([station.lat, station.lng], { icon: icon })
+        const marker = L.marker([lat, lng], { icon: icon })
             .addTo(map)
             .bindPopup(`<b>${station.name}</b>`)
             .on('click', () => showStationDetails(station.id));
@@ -321,14 +332,25 @@ function logout(btn) {
 
 // Initialize
 window.addEventListener('load', async function () {
-    await ensureStationsLoaded();
-    initMap();
+    try {
+        initMap();
 
-    // Check if we should show nearby stations automatically
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('nearby') === 'true') {
-        const nearbyBtn = document.querySelector('.action-btn');
-        setTimeout(() => showNearbyAvailable(nearbyBtn), 500);
+        // Wait for data and then add markers
+        await ensureStationsLoaded();
+        addStationMarkers();
+
+        // Check if we should show nearby stations automatically
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('nearby') === 'true') {
+            const nearbyBtn = document.querySelector('.action-btn');
+            setTimeout(() => {
+                if (typeof showNearbyAvailable === 'function') {
+                    showNearbyAvailable(nearbyBtn);
+                }
+            }, 500);
+        }
+    } catch (err) {
+        console.error('Error during map initialization:', err);
     }
 });
 
