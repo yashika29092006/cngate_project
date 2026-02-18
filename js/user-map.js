@@ -26,7 +26,7 @@ function addStationMarkers() {
     markers.forEach(marker => map.removeLayer(marker));
     markers = [];
 
-    stations.forEach(station => {
+    stations.forEach((station) => {
         const lat = parseFloat(station.lat);
         const lng = parseFloat(station.lng);
 
@@ -81,7 +81,7 @@ function showStationDetails(stationId) {
         <div class="amenities-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
             <p><strong>Available Amenities:</strong></p>
             <div class="amenities-list" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-                ${station.amenities.split(',').map(item => `
+                ${station.amenities.split(',').map((item) => `
                     <span class="amenity-item" style="background: #f0f7f4; color: #1b4332; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; border: 1px solid #d8e9e1;">
                         ${item.trim()}
                     </span>
@@ -126,7 +126,12 @@ function closeStationPopup() {
 }
 
 function getDirections(lat, lng) {
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+    CngateLoader.show("Locating station... Getting the fastest route!", false);
+
+    setTimeout(() => {
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+        CngateLoader.hide();
+    }, 1500);
 }
 
 function searchStations() {
@@ -136,14 +141,14 @@ function searchStations() {
 
     const stations = getStations();
 
-    let filteredStations = stations.filter(station =>
+    let filteredStations = stations.filter((station) =>
     (station.name.toLowerCase().includes(searchTerm) ||
         station.area.toLowerCase().includes(searchTerm) ||
         station.address.toLowerCase().includes(searchTerm))
     );
 
     if (availabilityFilter !== 'all') {
-        filteredStations = filteredStations.filter(station => station.availability === availabilityFilter);
+        filteredStations = filteredStations.filter((station) => station.availability === availabilityFilter);
     }
 
     if (crowdFilter !== 'all') {
@@ -261,6 +266,7 @@ async function reportAvailability(stationId, availability, btn) {
     }
 
     if (btn) btn.classList.add('btn-loading');
+    CngateLoader.show("Submitting your report... Thank you!", false);
 
     try {
         const res = await fetch(`/api/stations/${stationId}/report-availability`, {
@@ -272,13 +278,17 @@ async function reportAvailability(stationId, availability, btn) {
             body: JSON.stringify({ availability })
         });
         if (res.ok) {
-            alert("Report submitted! It will appear after admin approval.");
-            // Do not refresh immediate UI as it is pending
+            setTimeout(() => {
+                CngateLoader.hide();
+                alert("Report submitted! It will appear after admin approval.");
+            }, 1000);
         } else {
+            CngateLoader.hide();
             const err = await res.json();
             alert(err.detail || "Failed to report availability");
         }
     } catch (err) {
+        CngateLoader.hide();
         console.error(err);
         alert("Error reporting availability");
     } finally {

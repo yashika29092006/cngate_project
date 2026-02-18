@@ -152,13 +152,19 @@ async function approveStation(id, btn) {
         });
 
         if (response.ok) {
-            showToast('Station Approved', 'success');
-            loadPendingStations();
-            loadStats();
+            CngateLoader.show("Broadcasting new station... Done!", true);
+            setTimeout(() => {
+                CngateLoader.hide();
+                showToast('Station Approved', 'success');
+                loadPendingStations();
+                loadStats();
+            }, 1000);
         } else {
+            CngateLoader.hide();
             showToast('Failed to approve', 'error');
         }
     } catch (error) {
+        CngateLoader.hide();
         console.error(error);
     } finally {
         if (btn) btn.classList.remove('btn-loading');
@@ -176,12 +182,18 @@ async function rejectStation(id, btn) {
         });
 
         if (response.ok) {
-            showToast('Station Rejected', 'info');
-            loadPendingStations();
+            CngateLoader.show("Processing rejection...", true);
+            setTimeout(() => {
+                CngateLoader.hide();
+                showToast('Station Rejected', 'info');
+                loadPendingStations();
+            }, 1000);
         } else {
+            CngateLoader.hide();
             showToast('Failed to reject', 'error');
         }
     } catch (error) {
+        CngateLoader.hide();
         console.error(error);
     } finally {
         if (btn) btn.classList.remove('btn-loading');

@@ -207,13 +207,22 @@ document.getElementById('updateStationForm').addEventListener('submit', async fu
     };
 
     if (submitBtn) submitBtn.classList.add('btn-loading');
+    CngateLoader.show("Updating station details... Notifying users!", true);
 
     try {
         if (await updateStation(id, updates)) {
             renderAdminDashboard();
             closeModal();
-            alert('Station details updated successfully!');
+            setTimeout(() => {
+                CngateLoader.hide();
+                alert('Station details updated successfully!');
+            }, 1000);
+        } else {
+            CngateLoader.hide();
         }
+    } catch (err) {
+        CngateLoader.hide();
+        console.error(err);
     } finally {
         if (submitBtn) submitBtn.classList.remove('btn-loading');
     }

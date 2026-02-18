@@ -26,6 +26,8 @@ def verify_password(plain_password: str, hashed_password: str):
     except Exception as e:
         return False
 
+
+
 # creating new user
 def get_password_hash(password: str):
     # Store only hashed password in DB
@@ -34,6 +36,8 @@ def get_password_hash(password: str):
     hashed = bcrypt.hashpw(password.encode('utf-8')[:72], salt)
     return hashed.decode('utf-8')
 
+
+# creates JWT 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -44,12 +48,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
+# verifies sign , expire, algorithm
 def decode_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
         return None
+
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(

@@ -22,6 +22,7 @@ if "prepared_statements=" in DATABASE_URL:
     url_parts[4] = urlparse.urlencode(query)
     DATABASE_URL = urlparse.urlunparse(url_parts)
 
+# communicate with postgreSql
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,    

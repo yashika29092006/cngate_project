@@ -16,8 +16,8 @@ if (form) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginData)
         })
-            .then(async res => {
-                if (!res.ok) {
+            .then(async (res) => {
+                if (!res.status) {
                     const errorData = await res.json();
                     throw new Error(errorData.detail || 'Login failed');
                 }
@@ -27,12 +27,16 @@ if (form) {
                 sessionStorage.setItem('token', data.access_token);
                 sessionStorage.setItem('currentAdmin', JSON.stringify(data.admin));
 
-                // Super Admin Redirect
-                if (data.admin.email === 'superadmin@cngate.com') {
-                    window.location.href = 'super-admin-dashboard.html';
-                } else {
-                    window.location.href = 'admin-dashboard.html';
-                }
+                CngateLoader.show("Accessing Station Dashboard...", true);
+
+                setTimeout(() => {
+                    // Super Admin Redirect
+                    if (data.admin.email === 'superadmin@cngate.com') {
+                        window.location.href = 'super-admin-dashboard.html';
+                    } else {
+                        window.location.href = 'admin-dashboard.html';
+                    }
+                }, 1500);
             })
             .catch(err => {
                 console.error(err);

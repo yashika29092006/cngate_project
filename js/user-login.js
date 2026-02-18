@@ -26,7 +26,13 @@ if (form) {
             .then(data => {
                 sessionStorage.setItem('token', data.access_token);
                 sessionStorage.setItem('currentUser', JSON.stringify(data.user));
-                window.location.href = 'user-map.html?nearby=true';
+
+                // Show petrol bunk animation during transition
+                CngateLoader.show("Logging you in... Finding nearby stations!", false);
+
+                setTimeout(() => {
+                    window.location.href = 'user-map.html?nearby=true';
+                }, 1500); // Give time for animation
             })
             .catch(err => {
                 console.error(err);

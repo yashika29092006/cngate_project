@@ -7,7 +7,7 @@ if (form) {
         if (submitBtn) submitBtn.classList.add('btn-loading');
 
         const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenity"]:checked'))
-            .map(cb => cb.value)
+            .map((cb) => cb.value)
             .join(', ');
 
         const admin = {
@@ -27,9 +27,9 @@ if (form) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(admin)
         })
-            .then(async res => {
+            .then(async (res) => {
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.detail || 'Signup failed');
+                if (!res.status) throw new Error(data.detail || 'Signup failed');
                 return data;
             })
             .then(data => {

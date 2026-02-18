@@ -1,0 +1,173 @@
+/* Full-screen Loading Overlay */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(8px);
+}
+
+.loader-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loader-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.loader-text {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 1.25rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    animation: fadePulse 1.5s ease-in-out infinite;
+}
+
+/* Petrol Bunk Animation Container */
+.animation-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Pulsing outer circles */
+.circle-pulse {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(66, 153, 225, 0.1);
+    animation: circlePulse 2s ease-out infinite;
+}
+
+.circle-pulse:nth-child(1) {
+    width: 220px;
+    height: 220px;
+    animation-delay: 0s;
+}
+
+.circle-pulse:nth-child(2) {
+    width: 250px;
+    height: 250px;
+    animation-delay: 0.5s;
+}
+
+.circle-pulse:nth-child(3) {
+    width: 280px;
+    height: 280px;
+    animation-delay: 1s;
+}
+
+.inner-circle {
+    width: 180px;
+    height: 180px;
+    background: #ebf8ff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 10px 25px -5px rgba(66, 153, 225, 0.2);
+    border: 1px solid rgba(66, 153, 225, 0.1);
+}
+
+/* SVG Styling */
+.bunk-svg {
+    width: 120px;
+    height: 120px;
+    fill: none;
+    stroke: #3182ce;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Specific SVG animations */
+.nozzle-line {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawLine 2s ease-in-out infinite;
+}
+
+.scooter-body {
+    animation: vibrate 0.2s linear infinite alternate;
+}
+
+@keyframes circlePulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 0;
+    }
+}
+
+@keyframes fadePulse {
+
+    0%,
+    100% {
+        opacity: 0.7;
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes drawLine {
+    0% {
+        stroke-dashoffset: 100;
+    }
+
+    50% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes vibrate {
+    0% {
+        transform: rotate(-1deg) translateY(0);
+    }
+
+    100% {
+        transform: rotate(1deg) translateY(-2px);
+    }
+}
+
+/* Admin Specific: Yellow/Orange theme if preferred, but blue looks professional */
+.loader-overlay.admin .bunk-svg {
+    stroke: #dd6b20;
+}
+
+.loader-overlay.admin .inner-circle {
+    background: #fffaf0;
+}
+
+.loader-overlay.admin .circle-pulse {
+    background: rgba(237, 137, 54, 0.1);
+}

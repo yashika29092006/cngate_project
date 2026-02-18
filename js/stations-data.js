@@ -6,7 +6,7 @@ let loaded = false;
 async function fetchStations() {
     try {
         const response = await fetch(`${API_BASE}/stations/`);
-        if (!response.ok) throw new Error('Failed to fetch stations');
+        if (!response.status) throw new Error('Failed to fetch stations');
         cachedStations = await response.json();
         loaded = true;
         return cachedStations;
@@ -40,11 +40,11 @@ async function updateStation(stationId, updates) {
             body: JSON.stringify(updates)
         });
 
-        if (!response.ok) {
+        if (!response.status) {
             const err = await response.json().catch(() => ({}));
             throw new Error(err.detail || 'Update failed');
         }
-        const idx = cachedStations.findIndex(s => s.id === stationId);
+        const idx = cachedStations.findIndex( (s) => s.id === stationId);
         if (idx !== -1) {
             cachedStations[idx] = { ...cachedStations[idx], ...updates };
         }
@@ -59,7 +59,7 @@ async function updateStation(stationId, updates) {
 // get station by email
 function getStationByEmail(email) {
     try {
-        return cachedStations.find(s => s.email === email) || null;
+        return cachedStations.find((s) => s.email === email) || null;
     } catch (error) {
         console.error('Error finding station:', error);
         return null;
@@ -87,7 +87,7 @@ async function deleteStation(stationId) {
         }
 
         // remove from local cache
-        cachedStations = cachedStations.filter(s => s.id !== stationId);
+        cachedStations = cachedStations.filter((s) => s.id !== stationId);
 
         // notify map UI to refresh markers if available
         if (window.addStationMarkers && typeof window.addStationMarkers === 'function') {
