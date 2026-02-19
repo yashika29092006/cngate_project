@@ -27,16 +27,12 @@ if (form) {
                 sessionStorage.setItem('token', data.access_token);
                 sessionStorage.setItem('currentAdmin', JSON.stringify(data.admin));
 
-                CngateLoader.show("Accessing Station Dashboard...", true);
-
-                setTimeout(() => {
-                    // Super Admin Redirect
-                    if (data.admin.email === 'superadmin@cngate.com') {
-                        window.location.href = 'super-admin-dashboard.html';
-                    } else {
-                        window.location.href = 'admin-dashboard.html';
-                    }
-                }, 1500);
+                // Super Admin Redirect
+                if (data.admin.email === 'superadmin@cngate.com') {
+                    window.location.href = 'super-admin-dashboard.html';
+                } else {
+                    window.location.href = 'admin-dashboard.html';
+                }
             })
             .catch(err => {
                 console.error(err);

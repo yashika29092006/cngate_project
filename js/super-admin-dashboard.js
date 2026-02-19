@@ -34,9 +34,9 @@ async function loadStats() {
         const stations = await respStations.json();
         document.getElementById('stat-total').innerText = stations.length;
 
-        // Pending count is usually handled during loadPendingStations, 
-        // but we'll re-update here for consistency if needed.
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 async function loadPendingStations() {
@@ -117,7 +117,7 @@ async function loadContactRequests() {
                         <p>${emailDisplay} • 📞 ${contact.phone || 'N/A'}</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(contact.created_at).toLocaleString()}</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(contact.created_at + (contact.created_at.includes('Z') || contact.created_at.includes('+') ? '' : 'Z')).toLocaleString()}</span>
                         <button class="btn btn-reject" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="deleteContact(${contact.id}, this)">Delete</button>
                     </div>
                 </div>
@@ -152,19 +152,13 @@ async function approveStation(id, btn) {
         });
 
         if (response.ok) {
-            CngateLoader.show("Broadcasting new station... Done!", true);
-            setTimeout(() => {
-                CngateLoader.hide();
-                showToast('Station Approved', 'success');
-                loadPendingStations();
-                loadStats();
-            }, 1000);
+            showToast('Station Approved', 'success');
+            loadPendingStations();
+            loadStats();
         } else {
-            CngateLoader.hide();
             showToast('Failed to approve', 'error');
         }
     } catch (error) {
-        CngateLoader.hide();
         console.error(error);
     } finally {
         if (btn) btn.classList.remove('btn-loading');
@@ -182,18 +176,12 @@ async function rejectStation(id, btn) {
         });
 
         if (response.ok) {
-            CngateLoader.show("Processing rejection...", true);
-            setTimeout(() => {
-                CngateLoader.hide();
-                showToast('Station Rejected', 'info');
-                loadPendingStations();
-            }, 1000);
+            showToast('Station Rejected', 'info');
+            loadPendingStations();
         } else {
-            CngateLoader.hide();
             showToast('Failed to reject', 'error');
         }
     } catch (error) {
-        CngateLoader.hide();
         console.error(error);
     } finally {
         if (btn) btn.classList.remove('btn-loading');

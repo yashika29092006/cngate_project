@@ -75,7 +75,7 @@ function showStationDetails(stationId) {
         <p><strong>Quantity:</strong> ${station.quantity || 0} kg</p>
         <p><strong>Price:</strong> ₹${station.price}/kg</p>
         <p><strong>Timing:</strong> ${station.timing}</p>
-        <p><strong>Last Updated:</strong> ${new Date(station.last_updated).toLocaleString()}</p>
+        <p><strong>Last Updated:</strong> ${new Date(station.last_updated + (station.last_updated.includes('Z') || station.last_updated.includes('+') ? '' : 'Z')).toLocaleString()}</p>
 
         ${station.amenities ? `
         <div class="amenities-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
@@ -126,12 +126,7 @@ function closeStationPopup() {
 }
 
 function getDirections(lat, lng) {
-    CngateLoader.show("Locating station... Getting the fastest route!", false);
-
-    setTimeout(() => {
-        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-        CngateLoader.hide();
-    }, 1500);
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 }
 
 function searchStations() {
@@ -266,7 +261,6 @@ async function reportAvailability(stationId, availability, btn) {
     }
 
     if (btn) btn.classList.add('btn-loading');
-    CngateLoader.show("Submitting your report... Thank you!", false);
 
     try {
         const res = await fetch(`/api/stations/${stationId}/report-availability`, {
@@ -278,17 +272,13 @@ async function reportAvailability(stationId, availability, btn) {
             body: JSON.stringify({ availability })
         });
         if (res.ok) {
-            setTimeout(() => {
-                CngateLoader.hide();
-                alert("Report submitted! It will appear after admin approval.");
-            }, 1000);
+            alert("Report submitted! It will appear after admin approval.");
+            // Do not refresh immediate UI as it is pending
         } else {
-            CngateLoader.hide();
             const err = await res.json();
             alert(err.detail || "Failed to report availability");
         }
     } catch (err) {
-        CngateLoader.hide();
         console.error(err);
         alert("Error reporting availability");
     } finally {
