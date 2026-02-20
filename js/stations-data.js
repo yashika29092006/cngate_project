@@ -1,9 +1,9 @@
-const API_BASE = '/api';
+export const API_BASE = '/api';
 
 let cachedStations = [];
 let loaded = false;
 
-async function fetchStations() {
+export async function fetchStations() {
     try {
         const response = await fetch(`${API_BASE}/stations/`);
         if (!response.status) throw new Error('Failed to fetch stations');
@@ -19,19 +19,19 @@ async function fetchStations() {
 }
 fetchStations();
 
-function getStations() {
+export function getStations() {
     return cachedStations;
 }
 
-function ensureStationsLoaded(force = false) {
+export function ensureStationsLoaded(force = false) {
     if (loaded && !force) return Promise.resolve(cachedStations);
     return fetchStations();
 }
 
-async function updateStation(stationId, updates) {
+export async function updateStation(stationId, updates) {
     try {
         const token = sessionStorage.getItem('token');
-        const response = await fetch(`${API_BASE}/stations/${stationId}`, {
+        const response = await fetch(`${API_BASE}/station/${stationId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,11 +40,11 @@ async function updateStation(stationId, updates) {
             body: JSON.stringify(updates)
         });
 
-        if (!response.status) {
+        if (!response.ok) {
             const err = await response.json().catch(() => ({}));
             throw new Error(err.detail || 'Update failed');
         }
-        const idx = cachedStations.findIndex( (s) => s.id === stationId);
+        const idx = cachedStations.findIndex((s) => s.id === stationId);
         if (idx !== -1) {
             cachedStations[idx] = { ...cachedStations[idx], ...updates };
         }
@@ -57,7 +57,7 @@ async function updateStation(stationId, updates) {
 }
 
 // get station by email
-function getStationByEmail(email) {
+export function getStationByEmail(email) {
     try {
         return cachedStations.find((s) => s.email === email) || null;
     } catch (error) {
@@ -65,13 +65,9 @@ function getStationByEmail(email) {
         return null;
     }
 }
-window.getStations = getStations;
-window.ensureStationsLoaded = ensureStationsLoaded;
-window.updateStation = updateStation;
-window.getStationByEmail = getStationByEmail;
 
 // delete opertaion
-async function deleteStation(stationId) {
+export async function deleteStation(stationId) {
     try {
         const token = sessionStorage.getItem('token');
         const response = await fetch(`${API_BASE}/stations/${stationId}`, {
@@ -102,4 +98,3 @@ async function deleteStation(stationId) {
     }
 }
 
-window.deleteStation = deleteStation;

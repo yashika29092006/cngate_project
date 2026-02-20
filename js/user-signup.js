@@ -4,7 +4,10 @@ if (form) {
         e.preventDefault();
 
         const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.classList.add('btn-loading');
+        if (submitBtn) {
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
 
         const user = {
             name: document.getElementById('user-signup-name').value,
@@ -20,12 +23,12 @@ if (form) {
             body: JSON.stringify(user)
         })
             .then(async res => {
-                const data = await res.json();
+                const data = await res.json().catch(() => ({}));
                 if (!res.ok) throw new Error(data.detail || 'Signup failed');
                 return data;
             })
             .then(data => {
-                alert(data.message);
+                alert(data.message || 'Signup successful!');
                 window.location.href = 'user-login.html';
             })
             .catch(err => {
@@ -33,7 +36,11 @@ if (form) {
                 alert('Signup failed. ' + (err.message || 'Try again'));
             })
             .finally(() => {
-                if (submitBtn) submitBtn.classList.remove('btn-loading');
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                }
             });
     });
 }
+

@@ -4,7 +4,10 @@ if (form) {
         e.preventDefault();
 
         const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.classList.add('btn-loading');
+        if (submitBtn) {
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
 
         const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenity"]:checked'))
             .map((cb) => cb.value)
@@ -29,11 +32,11 @@ if (form) {
         })
             .then(async (res) => {
                 const data = await res.json();
-                if (!res.status) throw new Error(data.detail || 'Signup failed');
+                if (!res.ok) throw new Error(data.detail || 'Signup failed');
                 return data;
             })
             .then(data => {
-                alert(data.message);
+                alert(data.message || 'Signup successful!');
                 window.location.href = 'admin-login.html';
             })
             .catch(err => {
@@ -41,7 +44,10 @@ if (form) {
                 alert('Signup failed. ' + (err.message || 'Try again'));
             })
             .finally(() => {
-                if (submitBtn) submitBtn.classList.remove('btn-loading');
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                }
             });
     });
 }
@@ -69,3 +75,4 @@ function getCurrentLocation(btn) {
 }
 
 window.getCurrentLocation = getCurrentLocation;
+

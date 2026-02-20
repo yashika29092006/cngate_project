@@ -39,3 +39,4 @@ async function loadProfile() {
 }
 
 document.addEventListener('DOMContentLoaded', loadProfile);
+

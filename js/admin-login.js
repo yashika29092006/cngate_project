@@ -4,7 +4,10 @@ if (form) {
         e.preventDefault();
 
         const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.classList.add('btn-loading');
+        if (submitBtn) {
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
 
         const loginData = {
             email: document.getElementById('admin-email').value,
@@ -17,8 +20,8 @@ if (form) {
             body: JSON.stringify(loginData)
         })
             .then(async (res) => {
-                if (!res.status) {
-                    const errorData = await res.json();
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({}));
                     throw new Error(errorData.detail || 'Login failed');
                 }
                 return await res.json();
@@ -36,10 +39,13 @@ if (form) {
             })
             .catch(err => {
                 console.error(err);
-                alert('Login failed. Check credentials and try again.');
+                alert(err.message || 'Login failed. Check credentials and try again.');
             })
             .finally(() => {
-                if (submitBtn) submitBtn.classList.remove('btn-loading');
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                }
             });
     });
 }

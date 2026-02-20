@@ -1,3 +1,4 @@
+import { getStations, ensureStationsLoaded } from './stations-data.js';
 
 let map;
 let markers = [];
@@ -54,6 +55,7 @@ function addStationMarkers() {
         markers.push(marker);
     });
 }
+window.addStationMarkers = addStationMarkers;
 
 function showStationDetails(stationId) {
     const station = getStations().find(s => s.id === stationId);
@@ -75,7 +77,7 @@ function showStationDetails(stationId) {
         <p><strong>Quantity:</strong> ${station.quantity || 0} kg</p>
         <p><strong>Price:</strong> ₹${station.price}/kg</p>
         <p><strong>Timing:</strong> ${station.timing}</p>
-        <p><strong>Last Updated:</strong> ${new Date(station.last_updated + (station.last_updated.includes('Z') || station.last_updated.includes('+') ? '' : 'Z')).toLocaleString()}</p>
+        <p><strong>Last Updated:</strong> ${new Date(station.updated_at || station.last_updated || Date.now()).toLocaleString()}</p>
 
         ${station.amenities ? `
         <div class="amenities-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
@@ -120,14 +122,17 @@ function showStationDetails(stationId) {
     popup.classList.add('active');
     fetchReviews(stationId);
 }
+window.showStationDetails = showStationDetails;
 
 function closeStationPopup() {
     document.getElementById('stationPopup').classList.remove('active');
 }
+window.closeStationPopup = closeStationPopup;
 
 function getDirections(lat, lng) {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 }
+window.getDirections = getDirections;
 
 function searchStations() {
     const searchTerm = document.getElementById('searchStation').value.toLowerCase();
@@ -147,7 +152,6 @@ function searchStations() {
     }
 
     if (crowdFilter !== 'all') {
-        // Assuming crowd is stored as 'Low', 'Moderate', 'High' or similar case-insensitive match might be safer
         filteredStations = filteredStations.filter(station =>
             (station.crowd && station.crowd.toLowerCase() === crowdFilter.toLowerCase())
         );
@@ -161,11 +165,7 @@ function searchStations() {
         const lat = parseFloat(station.lat);
         const lng = parseFloat(station.lng);
 
-        // Check for valid coordinates
-        if (isNaN(lat) || isNaN(lng)) {
-            console.warn(`Station ${station.id} (${station.name}) has missing or invalid coordinates. Skipping.`);
-            return;
-        }
+        if (isNaN(lat) || isNaN(lng)) return;
 
         const iconClass = station.availability === 'available' ? 'marker-available' : 'marker-unavailable';
         const icon = L.divIcon({
@@ -188,8 +188,7 @@ function searchStations() {
         map.fitBounds(group.getBounds().pad(0.1));
     }
 }
-
-// review session
+window.searchStations = searchStations;
 
 async function fetchReviews(stationId) {
     try {
@@ -252,6 +251,7 @@ async function submitReview(stationId, btn) {
         if (btn) btn.classList.remove('btn-loading');
     }
 }
+window.submitReview = submitReview;
 
 async function reportAvailability(stationId, availability, btn) {
     const token = sessionStorage.getItem('token');
@@ -273,7 +273,6 @@ async function reportAvailability(stationId, availability, btn) {
         });
         if (res.ok) {
             alert("Report submitted! It will appear after admin approval.");
-            // Do not refresh immediate UI as it is pending
         } else {
             const err = await res.json();
             alert(err.detail || "Failed to report availability");
@@ -285,8 +284,7 @@ async function reportAvailability(stationId, availability, btn) {
         if (btn) btn.classList.remove('btn-loading');
     }
 }
-
-
+window.reportAvailability = reportAvailability;
 
 function showNearbyAvailable(btn) {
     if (!navigator.geolocation) {
@@ -306,10 +304,8 @@ function showNearbyAvailable(btn) {
             return;
         }
 
-        // Center map on user
         map.setView([userLat, userLng], 13);
 
-        // Add or update user marker
         if (userLocationMarker) {
             map.removeLayer(userLocationMarker);
         }
@@ -321,7 +317,6 @@ function showNearbyAvailable(btn) {
             })
         }).addTo(map).bindPopup("You are here").openPopup();
 
-        // Filter and show only available
         document.getElementById('availabilityFilter').value = 'available';
 
         searchStations();
@@ -332,6 +327,7 @@ function showNearbyAvailable(btn) {
         if (btn) btn.classList.remove('btn-loading');
     });
 }
+window.showNearbyAvailable = showNearbyAvailable;
 
 function logout(btn) {
     if (btn) btn.classList.add('btn-loading');
@@ -342,25 +338,19 @@ function logout(btn) {
         window.location.href = '../index.html';
     }, 500);
 }
+window.logout = logout;
 
-
-// Initialize
 window.addEventListener('load', async function () {
     try {
         initMap();
-
-        // Wait for data and then add markers
         await ensureStationsLoaded();
         addStationMarkers();
 
-        // Check if we should show nearby stations automatically
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('nearby') === 'true') {
             const nearbyBtn = document.querySelector('.action-btn');
             setTimeout(() => {
-                if (typeof showNearbyAvailable === 'function') {
-                    showNearbyAvailable(nearbyBtn);
-                }
+                showNearbyAvailable(nearbyBtn);
             }, 500);
         }
     } catch (err) {
@@ -368,11 +358,3 @@ window.addEventListener('load', async function () {
     }
 });
 
-// Helper for directions (called by onclick)
-window.getDirections = getDirections;
-window.reportAvailability = reportAvailability;
-window.submitReview = submitReview;
-window.closeStationPopup = closeStationPopup;
-window.logout = logout;
-window.searchStations = searchStations;
-window.showNearbyAvailable = showNearbyAvailable;

@@ -4,7 +4,10 @@ if (form) {
         e.preventDefault();
 
         const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.classList.add('btn-loading');
+        if (submitBtn) {
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
 
         const email = document.getElementById('reset-email').value;
         const password = document.getElementById('reset-new-password').value;
@@ -37,7 +40,10 @@ if (form) {
             console.error(err);
             alert("An error occurred. Please try again later.");
         } finally {
-            if (submitBtn) submitBtn.classList.remove('btn-loading');
+            if (submitBtn) {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
         }
     });
 }

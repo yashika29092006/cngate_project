@@ -1,4 +1,5 @@
-console.log('contact.js v3 loaded');
+console.log('contact.js v4 loaded');
+
 // Header scroll effect
 window.addEventListener('scroll', () => {
     const header = document.getElementById('header');
@@ -66,7 +67,10 @@ if (contactForm) {
         e.preventDefault();
 
         const submitBtn = contactForm.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.classList.add('btn-loading');
+        if (submitBtn) {
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
 
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
@@ -96,7 +100,6 @@ if (contactForm) {
             role: role || "",
             station_name: station_name || ""
         };
-        console.log('Sending payload:', payload);
 
         try {
             const response = await fetch('/api/contact/', {
@@ -109,7 +112,6 @@ if (contactForm) {
 
             if (response.ok) {
                 alert('Message sent successfully! We will get back to you shortly.');
-                // Refresh responses grid or clear form
                 e.target.reset();
             } else {
                 const errorData = await response.json().catch(() => ({}));
@@ -132,7 +134,10 @@ if (contactForm) {
             console.error('Error:', error);
             alert('An error occurred.');
         } finally {
-            if (submitBtn) submitBtn.classList.remove('btn-loading');
+            if (submitBtn) {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
         }
     });
 }

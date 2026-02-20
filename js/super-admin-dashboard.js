@@ -23,17 +23,15 @@ async function checkAuthAndLoad() {
         ]);
     } catch (error) {
         console.error('Error loading dashboard:', error);
-        // Handle unauthorized or server error
     }
 }
 
 async function loadStats() {
     try {
-        // Fetch approved stations from regular endpoint
         const respStations = await fetch(`${API_URL}/stations/`);
         const stations = await respStations.json();
-        document.getElementById('stat-total').innerText = stations.length;
-
+        const statTotal = document.getElementById('stat-total');
+        if (statTotal) statTotal.innerText = stations.length;
     } catch (e) {
         console.error(e);
     }
@@ -41,6 +39,7 @@ async function loadStats() {
 
 async function loadPendingStations() {
     const container = document.getElementById('pending-grid');
+    if (!container) return;
 
     try {
         const response = await fetch(`${API_URL}/super-admin/stations/pending`, {
@@ -53,7 +52,8 @@ async function loadPendingStations() {
         }
 
         const stations = await response.json();
-        document.getElementById('stat-pending').innerText = stations.length;
+        const statPending = document.getElementById('stat-pending');
+        if (statPending) statPending.innerText = stations.length;
 
         if (stations.length === 0) {
             container.innerHTML = '<div class="empty-state">No new station requests at the moment.</div>';
@@ -85,6 +85,7 @@ async function loadPendingStations() {
 
 async function loadContactRequests() {
     const container = document.getElementById('contacts-list');
+    if (!container) return;
 
     try {
         const response = await fetch(`${API_URL}/super-admin/contacts`, {
@@ -94,7 +95,8 @@ async function loadContactRequests() {
         if (response.status === 403) return;
 
         const contacts = await response.json();
-        document.getElementById('stat-contacts').innerText = contacts.length;
+        const statContacts = document.getElementById('stat-contacts');
+        if (statContacts) statContacts.innerText = contacts.length;
 
         if (contacts.length === 0) {
             container.innerHTML = '<div class="empty-state">Zero unread messages. Good job!</div>';
@@ -164,6 +166,7 @@ async function approveStation(id, btn) {
         if (btn) btn.classList.remove('btn-loading');
     }
 }
+window.approveStation = approveStation;
 
 async function rejectStation(id, btn) {
     if (!confirm('Reject and delete this station request permanently?')) return;
@@ -187,6 +190,7 @@ async function rejectStation(id, btn) {
         if (btn) btn.classList.remove('btn-loading');
     }
 }
+window.rejectStation = rejectStation;
 
 async function respondToContact(id, btn) {
     const responseText = document.getElementById(`response-text-${id}`).value;
@@ -215,6 +219,7 @@ async function respondToContact(id, btn) {
         if (btn) btn.classList.remove('btn-loading');
     }
 }
+window.respondToContact = respondToContact;
 
 async function deleteContact(id, btn) {
     if (!confirm('Delete this message permanently?')) return;
@@ -238,6 +243,7 @@ async function deleteContact(id, btn) {
         if (btn) btn.classList.remove('btn-loading');
     }
 }
+window.deleteContact = deleteContact;
 
 function getAuthHeaders() {
     const token = sessionStorage.getItem('token');
@@ -256,14 +262,10 @@ function logout(btn) {
     }, 500);
 }
 window.logout = logout;
-window.approveStation = approveStation;
-window.rejectStation = rejectStation;
-window.deleteContact = deleteContact;
-window.respondToContact = respondToContact;
 
 function showToast(msg, type) {
-    // Simple alert for now, but UI-wise we could do better
     alert(msg);
 }
 
 document.addEventListener('DOMContentLoaded', checkAuthAndLoad);
+

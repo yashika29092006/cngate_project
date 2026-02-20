@@ -1,11 +1,11 @@
+import { getStations, ensureStationsLoaded, updateStation } from './stations-data.js';
+
 const currentAdminData = sessionStorage.getItem('currentAdmin');
 if (!currentAdminData) {
     window.location.href = '../pages/admin-login.html';
 }
 
-
 const currentAdmin = JSON.parse(currentAdminData);
-
 
 async function renderAdminDashboard() {
     const grid = document.getElementById('stations-grid');
@@ -17,9 +17,7 @@ async function renderAdminDashboard() {
     await ensureStationsLoaded();
     const stations = getStations();
 
-
     const adminStation = stations.find(s => s.id === currentAdmin.stationId);
-
 
     if (!adminStation) {
         grid.innerHTML = '<p style="color: #666;">Station not found.</p>';
@@ -74,14 +72,10 @@ async function renderAdminDashboard() {
         fetchAdminReviews(adminStation.id);
     }
 
-
-
     const toolbar = document.getElementById('admin-toolbar');
     if (toolbar) {
         const availabilityLabel = adminStation.availability === 'available' ? 'Available' : 'Not Available';
         const quantity = adminStation.quantity !== undefined ? `${adminStation.quantity} KG` : '—';
-        const lastUpdated = adminStation.updated_at || adminStation.last_updated || '';
-
 
         toolbar.innerHTML = `
             <div class="toolbar-card">
@@ -149,7 +143,6 @@ async function renderAdminDashboard() {
     }
 }
 
-
 function editStation(id) {
     if (currentAdmin.stationId !== id) {
         alert('You can only edit your own station!');
@@ -159,7 +152,6 @@ function editStation(id) {
     const stations = getStations();
     const station = stations.find(s => s.id === id);
     if (!station) return;
-
 
     document.getElementById('edit-station-id').value = id;
     document.getElementById('edit-availability').value = station.availability;
@@ -182,49 +174,49 @@ function editStation(id) {
     document.getElementById('edit-modal').classList.add('active');
 }
 
+const updateStationForm = document.getElementById('updateStationForm');
+if (updateStationForm) {
+    updateStationForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-document.getElementById('updateStationForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
+        const submitBtn = document.getElementById('update-details-btn');
+        const id = parseInt(document.getElementById('edit-station-id').value);
 
-    const submitBtn = document.getElementById('update-details-btn');
-    const id = parseInt(document.getElementById('edit-station-id').value);
-
-    if (currentAdmin.stationId !== id) {
-        alert('You can only update your own station!');
-        closeModal();
-        return;
-    }
-
-    const updates = {
-        availability: document.getElementById('edit-availability').value,
-        quantity: parseInt(document.getElementById('edit-quantity').value),
-        crowd: document.getElementById('edit-crowd').value,
-        price: parseFloat(document.getElementById('edit-price').value),
-        timing: document.getElementById('edit-timing').value,
-        amenities: Array.from(document.querySelectorAll('input[name="edit-amenity"]:checked'))
-            .map(cb => cb.value)
-            .join(', ')
-    };
-
-    if (submitBtn) submitBtn.classList.add('btn-loading');
-
-    try {
-        if (await updateStation(id, updates)) {
-            renderAdminDashboard();
+        if (currentAdmin.stationId !== id) {
+            alert('You can only update your own station!');
             closeModal();
-            alert('Station details updated successfully!');
+            return;
         }
-    } finally {
-        if (submitBtn) submitBtn.classList.remove('btn-loading');
-    }
-});
 
+        const updates = {
+            availability: document.getElementById('edit-availability').value,
+            quantity: parseInt(document.getElementById('edit-quantity').value),
+            crowd: document.getElementById('edit-crowd').value,
+            price: parseFloat(document.getElementById('edit-price').value),
+            timing: document.getElementById('edit-timing').value,
+            amenities: Array.from(document.querySelectorAll('input[name="edit-amenity"]:checked'))
+                .map(cb => cb.value)
+                .join(', ')
+        };
+
+        if (submitBtn) submitBtn.classList.add('btn-loading');
+
+        try {
+            if (await updateStation(id, updates)) {
+                renderAdminDashboard();
+                closeModal();
+                alert('Station details updated successfully!');
+            }
+        } finally {
+            if (submitBtn) submitBtn.classList.remove('btn-loading');
+        }
+    });
+}
 
 function closeModal() {
     document.getElementById('edit-modal').classList.remove('active');
 }
 window.closeModal = closeModal;
-
 
 function logout(btn) {
     if (btn) btn.classList.add('btn-loading');
@@ -234,17 +226,16 @@ function logout(btn) {
         window.location.href = '../index.html';
     }, 500);
 }
-
 window.logout = logout;
 
-
-
-document.getElementById('edit-modal').addEventListener('click', function (e) {
-    if (e.target === this) {
-        closeModal();
-    }
-});
-
+const editModal = document.getElementById('edit-modal');
+if (editModal) {
+    editModal.addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+}
 
 window.addEventListener('load', function () {
     renderAdminDashboard();
@@ -359,3 +350,4 @@ async function deleteReview(reviewId, stationId) {
 }
 
 window.deleteReview = deleteReview;
+
