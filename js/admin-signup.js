@@ -25,6 +25,44 @@ if (form) {
             return;
         }
 
+        const emailInput = document.getElementById('admin-signup-email');
+        const emailValue = emailInput.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.com$/;
+        if (!emailRegex.test(emailValue)) {
+            alert('Please enter a valid email containing "@" and ending with ".com"');
+            emailInput.focus();
+            if (submitBtn) {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
+            return;
+        }
+
+        const phoneInput = document.getElementById('admin-signup-phone');
+        const phoneValue = phoneInput.value;
+        if (phoneValue.length !== 10 || isNaN(phoneValue)) {
+            alert('Phone number must be exactly 10 digits.');
+            phoneInput.focus();
+            if (submitBtn) {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
+            return;
+        }
+
+        const latInput = document.getElementById('admin-signup-latitude');
+        const lngInput = document.getElementById('admin-signup-longitude');
+        const latValue = parseFloat(latInput.value);
+        const lngValue = parseFloat(lngInput.value);
+        if (isNaN(latValue) || isNaN(lngValue)) {
+            alert('Please enter valid numerical latitude and longitude.');
+            if (submitBtn) {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
+            return;
+        }
+
         const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenity"]:checked'))
             .map((cb) => cb.value)
             .join(', ');
@@ -96,11 +134,20 @@ window.getCurrentLocation = getCurrentLocation;
 const stationNameInput = document.getElementById('admin-signup-name');
 if (stationNameInput) {
     stationNameInput.addEventListener('input', function (e) {
-        const value = e.target.value;
-        const filteredValue = value.replace(/[^A-Za-z\s]/g, '');
-        if (value !== filteredValue) {
-            e.target.value = filteredValue;
-        }
+        e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '');
     });
 }
+
+// Real-time validation for Phone Number (only numbers, max 10)
+const phoneInput = document.getElementById('admin-signup-phone');
+if (phoneInput) {
+    phoneInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+        if (value.length > 10) {
+            value = value.slice(0, 10); // Limit to 10 digits
+        }
+        e.target.value = value;
+    });
+}
+
 

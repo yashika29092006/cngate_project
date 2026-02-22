@@ -91,14 +91,15 @@
             <div class="form-group">
                 <label for="admin-signup-email">Email</label>
                 <div class="input-wrapper">
-                    <input type="email" id="admin-signup-email" placeholder="station@admin.com" required>
+                    <input type="email" id="admin-signup-email" placeholder="station@admin.com" required
+                        pattern="[^@\s]+@[^@\s]+\.com$" title="Email must contain '@' and end with '.com'">
                 </div>
             </div>
             <div class="form-group">
                 <label for="admin-signup-phone">Contact Number</label>
                 <div class="input-wrapper">
-                    <input type="tel" id="admin-signup-phone" pattern="[0-9]{10}" placeholder="Landline or Mobile"
-                        required>
+                    <input type="tel" id="admin-signup-phone" pattern="[0-9]{10}" placeholder="9876543210"
+                        maxlength="10" minlength="10" required title="Phone number must be exactly 10 digits">
                 </div>
             </div>
             <div class="form-group">
