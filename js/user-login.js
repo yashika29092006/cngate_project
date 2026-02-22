@@ -1,3 +1,5 @@
+import { API_BASE } from './stations-data.js';
+
 const form = document.getElementById('userLoginForm');
 if (form) {
     form.addEventListener('submit', function (e) {
@@ -14,7 +16,7 @@ if (form) {
             password: document.getElementById('user-password').value
         };
 
-        fetch('/api/user/login', {
+        fetch(`${API_BASE}/user/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(loginData)

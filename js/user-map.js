@@ -1,4 +1,4 @@
-import { getStations, ensureStationsLoaded } from './stations-data.js';
+import { getStations, ensureStationsLoaded, API_BASE } from './stations-data.js';
 
 let map;
 let markers = [];
@@ -192,7 +192,7 @@ window.searchStations = searchStations;
 
 async function fetchReviews(stationId) {
     try {
-        const res = await fetch(`/api/reviews/${stationId}`);
+        const res = await fetch(`${API_BASE}/reviews/${stationId}`);
         const reviews = await res.json();
         const list = document.getElementById('reviewsList');
         if (reviews.length === 0) {
@@ -228,7 +228,7 @@ async function submitReview(stationId, btn) {
     if (btn) btn.classList.add('btn-loading');
 
     try {
-        const res = await fetch(`/api/reviews/`, {
+        const res = await fetch(`${API_BASE}/reviews/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -263,7 +263,7 @@ async function reportAvailability(stationId, availability, btn) {
     if (btn) btn.classList.add('btn-loading');
 
     try {
-        const res = await fetch(`/api/stations/${stationId}/report-availability`, {
+        const res = await fetch(`${API_BASE}/stations/${stationId}/report-availability`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

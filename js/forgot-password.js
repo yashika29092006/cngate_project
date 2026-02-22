@@ -1,3 +1,5 @@
+import { API_BASE } from './stations-data.js';
+
 const form = document.getElementById('forgotPasswordForm');
 if (form) {
     form.addEventListener('submit', async function (e) {
@@ -15,7 +17,7 @@ if (form) {
         // Simple check to determine if it's admin or user reset based on previous page or input
         const urlParams = new URLSearchParams(window.location.search);
         const type = urlParams.get('type') || 'user';
-        const endpoint = `/api/${type}/forgot-password`;
+        const endpoint = `${API_BASE}/${type}/forgot-password`;
 
         try {
             const response = await fetch(endpoint, {

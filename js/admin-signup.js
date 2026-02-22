@@ -1,3 +1,5 @@
+import { API_BASE } from './stations-data.js';
+
 const form = document.getElementById('adminSignupForm');
 if (form) {
     form.addEventListener('submit', function (e) {
@@ -7,6 +9,20 @@ if (form) {
         if (submitBtn) {
             submitBtn.classList.add('btn-loading');
             submitBtn.disabled = true;
+        }
+
+        const nameInput = document.getElementById('admin-signup-name');
+        const nameValue = nameInput.value;
+        const nameRegex = /^[A-Za-z\s]+$/;
+
+        if (!nameRegex.test(nameValue)) {
+            alert('Station name should only contain letters and spaces.');
+            nameInput.focus();
+            if (submitBtn) {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
+            return;
         }
 
         const selectedAmenities = Array.from(document.querySelectorAll('input[name="amenity"]:checked'))
@@ -25,7 +41,7 @@ if (form) {
             amenities: selectedAmenities
         };
 
-        fetch('/api/admin/signup', {
+        fetch(`${API_BASE}/admin/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(admin)
@@ -75,4 +91,16 @@ function getCurrentLocation(btn) {
 }
 
 window.getCurrentLocation = getCurrentLocation;
+
+// Real-time validation for Station Name (only characters and spaces)
+const stationNameInput = document.getElementById('admin-signup-name');
+if (stationNameInput) {
+    stationNameInput.addEventListener('input', function (e) {
+        const value = e.target.value;
+        const filteredValue = value.replace(/[^A-Za-z\s]/g, '');
+        if (value !== filteredValue) {
+            e.target.value = filteredValue;
+        }
+    });
+}
 

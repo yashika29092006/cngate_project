@@ -1,3 +1,5 @@
+import { API_BASE } from './stations-data.js';
+
 async function loadProfile() {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -9,7 +11,7 @@ async function loadProfile() {
     const contentEl = document.getElementById('profileContent');
 
     try {
-        const res = await fetch('/api/user/profile', {
+        const res = await fetch(`${API_BASE}/user/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {

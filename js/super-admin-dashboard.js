@@ -1,4 +1,4 @@
-const API_URL = '/api';
+import { API_BASE } from './stations-data.js';
 
 async function checkAuthAndLoad() {
     // Set current date
@@ -28,7 +28,7 @@ async function checkAuthAndLoad() {
 
 async function loadStats() {
     try {
-        const respStations = await fetch(`${API_URL}/stations/`);
+        const respStations = await fetch(`${API_BASE}/stations/`);
         const stations = await respStations.json();
         const statTotal = document.getElementById('stat-total');
         if (statTotal) statTotal.innerText = stations.length;
@@ -42,7 +42,7 @@ async function loadPendingStations() {
     if (!container) return;
 
     try {
-        const response = await fetch(`${API_URL}/super-admin/stations/pending`, {
+        const response = await fetch(`${API_BASE}/super-admin/stations/pending`, {
             headers: getAuthHeaders()
         });
 
@@ -88,7 +88,7 @@ async function loadContactRequests() {
     if (!container) return;
 
     try {
-        const response = await fetch(`${API_URL}/super-admin/contacts`, {
+        const response = await fetch(`${API_BASE}/super-admin/contacts`, {
             headers: getAuthHeaders()
         });
 
@@ -148,7 +148,7 @@ async function approveStation(id, btn) {
 
     if (btn) btn.classList.add('btn-loading');
     try {
-        const response = await fetch(`${API_URL}/super-admin/stations/${id}/approve`, {
+        const response = await fetch(`${API_BASE}/super-admin/stations/${id}/approve`, {
             method: 'POST',
             headers: getAuthHeaders()
         });
@@ -173,7 +173,7 @@ async function rejectStation(id, btn) {
 
     if (btn) btn.classList.add('btn-loading');
     try {
-        const response = await fetch(`${API_URL}/super-admin/stations/${id}/reject`, {
+        const response = await fetch(`${API_BASE}/super-admin/stations/${id}/reject`, {
             method: 'POST',
             headers: getAuthHeaders()
         });
@@ -201,7 +201,7 @@ async function respondToContact(id, btn) {
 
     if (btn) btn.classList.add('btn-loading');
     try {
-        const response = await fetch(`${API_URL}/super-admin/contacts/${id}/respond`, {
+        const response = await fetch(`${API_BASE}/super-admin/contacts/${id}/respond`, {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ response: responseText })
@@ -226,7 +226,7 @@ async function deleteContact(id, btn) {
 
     if (btn) btn.classList.add('btn-loading');
     try {
-        const response = await fetch(`${API_URL}/super-admin/contacts/${id}`, {
+        const response = await fetch(`${API_BASE}/super-admin/contacts/${id}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });

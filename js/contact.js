@@ -1,3 +1,5 @@
+import { API_BASE } from './stations-data.js';
+
 console.log('contact.js v4 loaded');
 
 // Header scroll effect
@@ -18,7 +20,7 @@ async function loadPublicResponses() {
     if (!grid) return;
 
     try {
-        const response = await fetch('/api/contact/responses');
+        const response = await fetch(`${API_BASE}/contact/responses`);
         const data = await response.json();
 
         if (data.length === 0) {
@@ -102,7 +104,7 @@ if (contactForm) {
         };
 
         try {
-            const response = await fetch('/api/contact/', {
+            const response = await fetch(`${API_BASE}/contact/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
