@@ -1,6 +1,6 @@
 import { API_BASE } from './stations-data.js';
 
-async function checkAuthAndLoad() {
+export async function checkAuthAndLoad() {
     // Set current date
     const dateEl = document.getElementById('current-date');
     if (dateEl) {
@@ -26,7 +26,7 @@ async function checkAuthAndLoad() {
     }
 }
 
-async function loadStats() {
+export async function loadStats() {
     try {
         const respStations = await fetch(`${API_BASE}/stations/`);
         const stations = await respStations.json();
@@ -37,7 +37,7 @@ async function loadStats() {
     }
 }
 
-async function loadPendingStations() {
+export async function loadPendingStations() {
     const container = document.getElementById('pending-grid');
     if (!container) return;
 
@@ -83,7 +83,7 @@ async function loadPendingStations() {
     }
 }
 
-async function loadContactRequests() {
+export async function loadContactRequests() {
     const container = document.getElementById('contacts-list');
     if (!container) return;
 
@@ -192,7 +192,7 @@ async function rejectStation(id, btn) {
 }
 window.rejectStation = rejectStation;
 
-async function respondToContact(id, btn) {
+export async function respondToContact(id, btn) {
     const responseText = document.getElementById(`response-text-${id}`).value;
     if (!responseText.trim()) {
         showToast('Please enter a response', 'error');
@@ -221,7 +221,7 @@ async function respondToContact(id, btn) {
 }
 window.respondToContact = respondToContact;
 
-async function deleteContact(id, btn) {
+export async function deleteContact(id, btn) {
     if (!confirm('Delete this message permanently?')) return;
 
     if (btn) btn.classList.add('btn-loading');
@@ -245,7 +245,7 @@ async function deleteContact(id, btn) {
 }
 window.deleteContact = deleteContact;
 
-function getAuthHeaders() {
+export function getAuthHeaders() {
     const token = sessionStorage.getItem('token');
     return {
         'Content-Type': 'application/json',
@@ -253,7 +253,7 @@ function getAuthHeaders() {
     };
 }
 
-function logout(btn) {
+export function logout(btn) {
     if (btn) btn.classList.add('btn-loading');
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('currentAdmin');
@@ -263,9 +263,16 @@ function logout(btn) {
 }
 window.logout = logout;
 
-function showToast(msg, type) {
+export function showToast(msg, type) {
     alert(msg);
 }
+
+// Attach to window for HTML event handlers
+window.approveStation = approveStation;
+window.rejectStation = rejectStation;
+window.respondToContact = respondToContact;
+window.deleteContact = deleteContact;
+window.logout = logout;
 
 document.addEventListener('DOMContentLoaded', checkAuthAndLoad);
 

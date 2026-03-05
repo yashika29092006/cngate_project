@@ -15,7 +15,7 @@ window.addEventListener('scroll', () => {
 });
 
 // Load Public Responses
-async function loadPublicResponses() {
+export async function loadPublicResponses() {
     const grid = document.getElementById('responses-grid');
     if (!grid) return;
 
@@ -62,6 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadPublicResponses();
 });
+
+window.loadPublicResponses = loadPublicResponses;
 
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {

@@ -7,7 +7,7 @@ if (!currentAdminData) {
 
 const currentAdmin = JSON.parse(currentAdminData);
 
-async function renderAdminDashboard() {
+export async function renderAdminDashboard() {
     const grid = document.getElementById('stations-grid');
     const spinner = document.getElementById('dashboard-spinner');
     if (spinner) {
@@ -143,7 +143,7 @@ async function renderAdminDashboard() {
     }
 }
 
-function editStation(id) {
+export function editStation(id) {
     if (currentAdmin.stationId !== id) {
         alert('You can only edit your own station!');
         return;
@@ -213,12 +213,12 @@ if (updateStationForm) {
     });
 }
 
-function closeModal() {
+export function closeModal() {
     document.getElementById('edit-modal').classList.remove('active');
 }
 window.closeModal = closeModal;
 
-function logout(btn) {
+export function logout(btn) {
     if (btn) btn.classList.add('btn-loading');
     sessionStorage.removeItem('currentAdmin');
     sessionStorage.removeItem('token');
@@ -241,7 +241,7 @@ window.addEventListener('load', function () {
     renderAdminDashboard();
 });
 
-async function fetchRequests() {
+export async function fetchRequests() {
     try {
         const token = sessionStorage.getItem('token');
         const res = await fetch(`${API_BASE}/stations/requests/pending`, {
@@ -273,7 +273,7 @@ async function fetchRequests() {
     } catch (e) { console.error(e); }
 }
 
-async function resolveRequest(reqId, action, btn) {
+export async function resolveRequest(reqId, action, btn) {
     if (btn) btn.classList.add('btn-loading');
     try {
         const token = sessionStorage.getItem('token');
@@ -303,7 +303,7 @@ async function resolveRequest(reqId, action, btn) {
 }
 window.resolveRequest = resolveRequest;
 
-async function fetchAdminReviews(stationId) {
+export async function fetchAdminReviews(stationId) {
     try {
         const res = await fetch(`${API_BASE}/reviews/${stationId}`);
         const reviews = await res.json();
@@ -329,7 +329,7 @@ async function fetchAdminReviews(stationId) {
     }
 }
 
-async function deleteReview(reviewId, stationId) {
+export async function deleteReview(reviewId, stationId) {
     if (!confirm("Are you sure you want to delete this review?")) return;
 
     try {

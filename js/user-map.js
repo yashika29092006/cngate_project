@@ -20,7 +20,7 @@ function initMap() {
     }, 100);
 }
 
-function addStationMarkers() {
+export function addStationMarkers() {
     const stations = getStations();
 
     // Clear old markers
@@ -57,7 +57,7 @@ function addStationMarkers() {
 }
 window.addStationMarkers = addStationMarkers;
 
-function showStationDetails(stationId) {
+export function showStationDetails(stationId) {
     const station = getStations().find(s => s.id === stationId);
     if (!station) return;
 
@@ -124,17 +124,17 @@ function showStationDetails(stationId) {
 }
 window.showStationDetails = showStationDetails;
 
-function closeStationPopup() {
+export function closeStationPopup() {
     document.getElementById('stationPopup').classList.remove('active');
 }
 window.closeStationPopup = closeStationPopup;
 
-function getDirections(lat, lng) {
+export function getDirections(lat, lng) {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 }
 window.getDirections = getDirections;
 
-function searchStations() {
+export function searchStations() {
     const searchTerm = document.getElementById('searchStation').value.toLowerCase();
     const availabilityFilter = document.getElementById('availabilityFilter').value;
     const crowdFilter = document.getElementById('crowdFilter').value;
@@ -214,7 +214,7 @@ async function fetchReviews(stationId) {
     }
 }
 
-async function submitReview(stationId, btn) {
+export async function submitReview(stationId, btn) {
     const rating = document.getElementById('reviewRating').value;
     const comment = document.getElementById('reviewComment').value;
     const token = sessionStorage.getItem('token');
@@ -253,7 +253,7 @@ async function submitReview(stationId, btn) {
 }
 window.submitReview = submitReview;
 
-async function reportAvailability(stationId, availability, btn) {
+export async function reportAvailability(stationId, availability, btn) {
     const token = sessionStorage.getItem('token');
     if (!token) {
         alert("Please login to report availability");
@@ -286,7 +286,7 @@ async function reportAvailability(stationId, availability, btn) {
 }
 window.reportAvailability = reportAvailability;
 
-function showNearbyAvailable(btn) {
+export function showNearbyAvailable(btn) {
     if (!navigator.geolocation) {
         alert('Geolocation is not supported by your browser');
         return;
@@ -329,7 +329,7 @@ function showNearbyAvailable(btn) {
 }
 window.showNearbyAvailable = showNearbyAvailable;
 
-function logout(btn) {
+export function logout(btn) {
     if (btn) btn.classList.add('btn-loading');
     sessionStorage.removeItem('currentUser');
     sessionStorage.removeItem('currentAdmin');

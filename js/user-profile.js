@@ -1,6 +1,6 @@
 import { API_BASE } from './stations-data.js';
 
-async function loadProfile() {
+export async function loadProfile() {
     const token = sessionStorage.getItem('token');
     if (!token) {
         window.location.href = 'user-login.html';
@@ -39,6 +39,8 @@ async function loadProfile() {
         if (loadingEl) loadingEl.textContent = 'Error loading profile.';
     }
 }
+
+window.loadProfile = loadProfile;
 
 document.addEventListener('DOMContentLoaded', loadProfile);
 
