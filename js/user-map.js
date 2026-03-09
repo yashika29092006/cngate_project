@@ -17,7 +17,7 @@ function initMap() {
     // Force map to recognize container size
     setTimeout(() => {
         map.invalidateSize();
-    }, 100);
+    }, 1000);
 }
 
 export function addStationMarkers() {
