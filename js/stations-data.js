@@ -1,4 +1,7 @@
-export const API_BASE = '/api';
+export const API_BASE =
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:8000/api'
+        : '/api';
 
 let cachedStations = [];
 let loaded = false;
@@ -17,6 +20,7 @@ export async function fetchStations() {
         return cachedStations;
     }
 }
+
 fetchStations();
 
 export function getStations() {
@@ -85,7 +89,7 @@ export async function deleteStation(stationId) {
         // remove from local cache
         cachedStations = cachedStations.filter((s) => s.id !== stationId);
 
-        // notify map UI to refresh markers if available
+        // notify map ui to refresh markers if available
         if (window.addStationMarkers && typeof window.addStationMarkers === 'function') {
             try { window.addStationMarkers(); } catch (e) { /* ignore */ }
         }
