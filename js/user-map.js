@@ -18,7 +18,6 @@ function initMap() {
     setTimeout(() => {
         map.invalidateSize();
     }, 1000);
-    console.log(z,x,y,s)
 }
 
 export function addStationMarkers() {
