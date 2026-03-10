@@ -8,7 +8,7 @@ function initMap() {
     if (map) return;
 
     // Default center (can be adjusted)
-    c = map = L.map('map').setView([13.0827, 80.2707], 12); // Chennai coordinates as default
+    map = L.map('map').setView([13.0827, 80.2707], 12); // Chennai coordinates as default
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
@@ -18,7 +18,7 @@ function initMap() {
     setTimeout(() => {
         map.invalidateSize();
     }, 1000);
-    console.log(c)
+    console.log(z,x,y,s)
 }
 
 export function addStationMarkers() {
