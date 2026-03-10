@@ -35,7 +35,7 @@ export function ensureStationsLoaded(force = false) {
 export async function updateStation(stationId, updates) {
     try {
         const token = sessionStorage.getItem('token');
-        const response = await fetch(`${API_BASE}/station/${stationId}`, {
+        const response = await fetch(`${API_BASE}/stations/${stationId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

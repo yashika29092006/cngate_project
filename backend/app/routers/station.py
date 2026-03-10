@@ -6,7 +6,7 @@ from app.models.review import Review
 from datetime import datetime, timedelta
 from app.auth import get_current_admin, get_current_user
 
-router = APIRouter(prefix="/stations", tags=["Stations"])
+router = APIRouter(tags=["Stations"])
 
 def get_db():
     db = SessionLocal()
