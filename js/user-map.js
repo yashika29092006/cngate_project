@@ -77,7 +77,16 @@ export function showStationDetails(stationId) {
         <p><strong>Quantity:</strong> ${station.quantity || 0} kg</p>
         <p><strong>Price:</strong> ₹${station.price}/kg</p>
         <p><strong>Timing:</strong> ${station.timing}</p>
-        <p><strong>Last Updated:</strong> ${new Date(station.updated_at || station.last_updated || Date.now()).toLocaleString()}</p>
+        <p><strong>Last Updated:</strong> ${(() => {
+            const raw = station.updated_at || station.last_updated;
+            if (!raw) return 'Unknown';
+            // If it doesn't have Z or + (timezone), assume it's UTC and append Z. 
+            // Also ensure it's in ISO format (T instead of space)
+            const dateStr = (raw.includes('Z') || raw.includes('+'))
+                ? raw
+                : raw.replace(' ', 'T') + 'Z';
+            return new Date(dateStr).toLocaleString();
+        })()}</p>
 
         ${station.amenities ? `
         <div class="amenities-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
@@ -97,8 +106,9 @@ export function showStationDetails(stationId) {
             <div class="user-actions">
                 <h4>Report Status</h4>
                 <div class="report-buttons">
-                     <button onclick="reportAvailability(${station.id}, 'available', this)" class="btn-avail">Available</button>
-                     <button onclick="reportAvailability(${station.id}, 'unavailable', this)" class="btn-unavail">Unavailable</button>
+                     ${station.availability === 'available'
+            ? `<button onclick="reportAvailability(${station.id}, 'unavailable', this)" class="btn-unavail">Report Unavailable</button>`
+            : `<button onclick="reportAvailability(${station.id}, 'available', this)" class="btn-avail">Report Available</button>`}
                 </div>
             </div>
             <div class="reviews-section">

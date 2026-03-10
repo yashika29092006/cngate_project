@@ -258,7 +258,14 @@ export async function fetchRequests() {
                     <div class="request-item" style="background: white; padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <strong>User reported:</strong> <span class="status-badge ${r.requested_availability}">${r.requested_availability}</span>
-                            <div style="font-size: 0.8rem; color: #666;">${new Date(r.timestamp + (r.timestamp.includes('Z') || r.timestamp.includes('+') ? '' : 'Z')).toLocaleString()}</div>
+                            <div style="font-size: 0.8rem; color: #666;">${(() => {
+                        const raw = r.timestamp;
+                        if (!raw) return 'N/A';
+                        const dateStr = (raw.includes('Z') || raw.includes('+'))
+                            ? raw
+                            : raw.replace(' ', 'T') + 'Z';
+                        return new Date(dateStr).toLocaleString();
+                    })()}</div>
                         </div>
                         <div class="req-actions">
                             <button onclick="resolveRequest(${r.id}, 'approve', this)" style="background: #27ae60; color: white; border: none; padding: 0.5rem; border-radius: 4px; margin-right: 0.5rem; cursor: pointer;">Approve</button>
