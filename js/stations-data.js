@@ -102,3 +102,10 @@ export async function deleteStation(stationId) {
     }
 }
 
+export function formatDate(dateStr) {
+    if (!dateStr) return 'Unknown';
+    const normalized = (dateStr.includes('Z') || dateStr.includes('+'))
+        ? dateStr
+        : dateStr.replace(' ', 'T') + 'Z';
+    return new Date(normalized).toLocaleString();
+}

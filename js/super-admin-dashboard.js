@@ -1,4 +1,4 @@
-import { API_BASE } from './stations-data.js';
+import { API_BASE, formatDate } from './stations-data.js';
 
 export async function checkAuthAndLoad() {
     // Set current date
@@ -119,14 +119,7 @@ export async function loadContactRequests() {
                         <p>${emailDisplay} • 📞 ${contact.phone || 'N/A'}</p>
                     </div>
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">${(() => {
-                    const raw = contact.created_at;
-                    if (!raw) return 'N/A';
-                    const dateStr = (raw.includes('Z') || raw.includes('+'))
-                        ? raw
-                        : raw.replace(' ', 'T') + 'Z';
-                    return new Date(dateStr).toLocaleString();
-                })()}</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">${formatDate(contact.created_at)}</span>
                         <button class="btn btn-reject" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="deleteContact(${contact.id}, this)">Delete</button>
                     </div>
                 </div>

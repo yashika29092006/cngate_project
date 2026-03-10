@@ -1,4 +1,4 @@
-import { getStations, ensureStationsLoaded, API_BASE } from './stations-data.js';
+import { getStations, ensureStationsLoaded, API_BASE, formatDate } from './stations-data.js';
 
 let map;
 let markers = [];
@@ -77,16 +77,7 @@ export function showStationDetails(stationId) {
         <p><strong>Quantity:</strong> ${station.quantity || 0} kg</p>
         <p><strong>Price:</strong> ₹${station.price}/kg</p>
         <p><strong>Timing:</strong> ${station.timing}</p>
-        <p><strong>Last Updated:</strong> ${(() => {
-            const raw = station.updated_at || station.last_updated;
-            if (!raw) return 'Unknown';
-            // If it doesn't have Z or + (timezone), assume it's UTC and append Z. 
-            // Also ensure it's in ISO format (T instead of space)
-            const dateStr = (raw.includes('Z') || raw.includes('+'))
-                ? raw
-                : raw.replace(' ', 'T') + 'Z';
-            return new Date(dateStr).toLocaleString();
-        })()}</p>
+        <p><strong>Last Updated:</strong> ${formatDate(station.updated_at || station.last_updated)}</p>
 
         ${station.amenities ? `
         <div class="amenities-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">

@@ -1,4 +1,4 @@
-import { API_BASE } from './stations-data.js';
+import { API_BASE, formatDate } from './stations-data.js';
 
 console.log('contact.js v4 loaded');
 
@@ -33,7 +33,7 @@ export async function loadPublicResponses() {
                 <div style="margin-bottom: 1.5rem;">
                     <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Inquiry</span>
                     <p style="font-weight: 600; font-size: 1.1rem; margin-top: 0.5rem; color: var(--text-main);">"${item.message}"</p>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">${item.name} • ${new Date(item.created_at + (item.created_at.includes('Z') || item.created_at.includes('+') ? '' : 'Z')).toLocaleDateString()}</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">${item.name} • ${formatDate(item.created_at)}</span>
                 </div>
                 <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--primary);">
                     <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); font-weight: 700; display: block; margin-bottom: 0.5rem;">Official Response</span>
