@@ -10,7 +10,7 @@ function initMap() {
     // Default center (can be adjusted)
     map = L.map('map').setView([13.0827, 80.2707], 12); // Chennai coordinates as default
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{x}/{y}/{z}.png', {
         // attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
